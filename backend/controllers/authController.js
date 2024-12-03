@@ -5,10 +5,12 @@ require('../generateSecretKey');
 
 // Registration
 exports.register = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, username, DOB, role  } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ email, password: hashedPassword });
+    const { month, day, year } = DOB;
+    const formattedDOB = new Date(`${month} ${day}, ${year}`);
+    const newUser = new User({ email, password: hashedPassword, username, DOB:formattedDOB, role });
     await newUser.save();
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
@@ -18,9 +20,9 @@ exports.register = async (req, res) => {
 
 // Login
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }

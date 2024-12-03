@@ -5,7 +5,6 @@ const getUserData = async (req, res) => {
     try {
 
         console.log('User:', req.user);
-        // const user = await User.findOne({ email: req.user.email }).select('-password');
         const userId = req.user.id;
         const user = await User.findById(userId).select('-password');
     
@@ -15,8 +14,9 @@ const getUserData = async (req, res) => {
         }
 
         res.status(200).json({
-          name: user.name,
+          username: user.username,
           email: user.email,
+          DOB: user.DOB,
           role: user.role,
         });
       } catch (error) {

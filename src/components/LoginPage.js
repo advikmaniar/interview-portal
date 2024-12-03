@@ -1,21 +1,11 @@
 import React, { useState } from 'react';
-import { loginUser } from '../services/Authentication'; 
-import { useNavigate } from 'react-router-dom'; 
-import { Container, Box, TextField, Button, Grid, Typography, Paper } from '@mui/material'; 
-import { styled } from '@mui/system'; 
+import { loginUser } from '../services/Authentication';
+import { useNavigate } from 'react-router-dom';
+import { Box, Container, TextField, Button, Typography, Card, CardContent, Stack } from '@mui/material';
 
-const PaperContainer = styled(Paper)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  padding: theme.spacing(4),
-  backgroundColor: theme.palette.background.paper,
-  boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-  borderRadius: '10px',
-}));
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
@@ -23,11 +13,10 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await loginUser(email, password);
-      console.log("Response: "+response.data)
+      const response = await loginUser(username, password);
       localStorage.setItem('token', response.token); // Store JWT token in localStorage
       setErrorMessage('');
-      console.log("Email: "+email)
+      console.log("Username: " + username)
       navigate('/dashboard');
     } catch (error) {
       const errorText = error?.message || error?.response?.data?.message || 'Something went wrong!';
@@ -40,65 +29,116 @@ const LoginPage = () => {
   };
 
   return (
-    <Container maxWidth="xs" sx={{ mt: 8 }}>
-      <PaperContainer>
-        <Typography variant="h5" gutterBottom>
-          Login
-        </Typography>
-        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        backgroundColor: '#121212',
+        color: '#ffffff',
+      }}
+    >
+      <Container maxWidth="sm">
+        <Card
+          sx={{
+            backgroundColor: '#1f1f1f',
+            borderRadius: 4,
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
+            overflow: 'hidden',
+          }}
+        >
+          <CardContent>
+            <Typography
+              variant="h4"
+              component="h2"
+              sx={{
+                textAlign: 'center',
+                marginBottom: 3,
+                fontWeight: 'bold',
+                color: '#e0e0e0',
+              }}
+            >
+              Login
+            </Typography>
+            <form onSubmit={handleSubmit}>
               <TextField
-                label="Email"
-                type="email"
+                label="Username"
                 variant="outlined"
                 fullWidth
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 required
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                sx={{ marginBottom: 2 }}
               />
-            </Grid>
-            <Grid item xs={12}>
               <TextField
-                label="Password"
                 type="password"
+                label="Password"
                 variant="outlined"
                 fullWidth
+                required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
+                sx={{ marginBottom: 2 }}
               />
-            </Grid>
-            {errorMessage && (
-              <Grid item xs={12}>
-                <Typography color="error" variant="body2" align="center">
+              {errorMessage && (
+                <Typography
+                  sx={{
+                    marginTop: 2,
+                    textAlign: 'center',
+                    color: '#f44336',
+                  }}
+                >
                   {errorMessage}
                 </Typography>
-              </Grid>
-            )}
-            <Grid item xs={12}>
+              )}
               <Button
                 type="submit"
                 variant="contained"
-                color="primary"
                 fullWidth
-                sx={{ py: 1 }}
+                sx={{
+                  backgroundColor: '#2196f3',
+                  '&:hover': { backgroundColor: '#1976d2' },
+                }}
               >
                 Login
               </Button>
-            </Grid>
-          </Grid>
-        </form>
-        <Button
-          onClick={handleRegisterRedirect}
-          fullWidth
-          variant="text"
-          sx={{ mt: 2 }}
-        >
-          Register
-        </Button>
-      </PaperContainer>
-    </Container>
+            </form>
+
+            <Stack direction="row" justifyContent="center" spacing={2} sx={{ marginTop: 3 }}>
+              <Button
+                variant="text"
+                onClick={handleRegisterRedirect}
+                sx={{
+                  color: '#90caf9',
+                  textTransform: 'none',
+                  '&:hover': {
+                    backgroundColor: '#1976d2',
+                    color: 'white'
+                  },
+                }}
+              >
+                Forgot Password
+              </Button>
+              <Button
+                variant="text"
+                onClick={handleRegisterRedirect}
+                sx={{
+                  color: '#90caf9',
+                  textTransform: 'none',
+                  '&:hover': {
+                    backgroundColor: '#1976d2',
+                    color: 'white'
+                  },
+                }}
+              >
+                Don't have an account? Register
+              </Button>
+            </Stack>
+          </CardContent>
+        </Card>
+      </Container>
+    </Box>
   );
 };
 

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {useNavigate, useParams } from 'react-router-dom';
+import {useNavigate } from 'react-router-dom';
+import { Button } from '@mui/material'; 
 
 const Dashboard = () => {
     const [userData, setUserData] = useState(null);
     const navigate = useNavigate();
-    // const {email} = useParams();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -15,6 +15,7 @@ const Dashboard = () => {
                 headers: { Authorization: `Bearer ${token}` }, 
               });
               setUserData(response.data);
+              console.log(response.data);
             } catch (error) {
               console.error(error);
               navigate('/login'); 
@@ -23,11 +24,17 @@ const Dashboard = () => {
         fetchData();
     }, [navigate]);
 
+    const handleLogout = () => {
+        localStorage.removeItem('token'); 
+        console.log("Logout Event - Token Cleared.")
+        navigate('/login');
+    };
+
     if (!userData) return <div>Loading...</div>;
 
     return (
         <div>
-            <h2>Welcome, {userData?.email}</h2>
+            <h2>Welcome, {userData?.username}</h2>
             <p>Role: {userData?.role}</p>
             {userData.role === 'candidate' && (
                 <div>
@@ -53,6 +60,16 @@ const Dashboard = () => {
                     </ul> */}
                 </div>
             )}
+            {/* Logout Button */}
+            <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ py: 1 }}
+                onClick={handleLogout} 
+              >
+                Logout
+              </Button>
         </div>
     );
 };
