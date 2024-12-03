@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const connectDB = require('./config/database');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -12,10 +13,11 @@ app.use(express.json());
 
 connectDB();
 app.use('/api', authRoutes);
+app.use('/profile', userRoutes);
 
 // Routes
-app.use('/auth', require('./routes/authRoutes'));
-app.use('/user', require('./routes/userRoutes'));
+// app.use('/auth', require('./routes/authRoutes'));
+// app.use('/user', require('./routes/userRoutes'));
 
 // // Registration Endpoint
 // app.post('/api/register', async (req, res) => {

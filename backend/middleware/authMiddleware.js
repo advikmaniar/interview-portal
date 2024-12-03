@@ -5,8 +5,9 @@ const authenticate = (req, res, next) => {
     if (!token) return res.status(401).json({ error: 'Access denied. No token provided.' });
 
     try {
-        const decoded = jwt.verify(token, 'secret_key');
-        req.user = decoded; // Attach decoded user data to the request object
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        req.user = decoded; 
+        console.log("Authentication Successful!")
         next();
     } catch (err) {
         res.status(401).json({ error: 'Invalid token.' });
