@@ -5,8 +5,11 @@ const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 require('dotenv').config();
+const initializeSocketServer = require('./socketServer');
+const http = require('http');
 
 const app = express();
+const server = http.createServer(app);
 
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
@@ -14,6 +17,10 @@ app.use(express.json());
 connectDB();
 app.use('/api', authRoutes);
 app.use('/profile', userRoutes);
+app.use('/users', userRoutes);
+app.use('/', userRoutes);
+
+initializeSocketServer(server);
 
 
 // Start Server

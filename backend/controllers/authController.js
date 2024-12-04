@@ -5,12 +5,13 @@ require('../generateSecretKey');
 
 // Registration
 exports.register = async (req, res) => {
-  const { email, password, username, DOB, role  } = req.body;
+  const { firstName, lastName, email, password, username, DOB, role  } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const { month, day, year } = DOB;
     const formattedDOB = new Date(`${month} ${day}, ${year}`);
-    const newUser = new User({ email, password: hashedPassword, username, DOB:formattedDOB, role });
+    const capitalize = str => str ? str[0].toUpperCase() + str.slice(1).toLowerCase() : '';
+    const newUser = new User({ firstName: capitalize(firstName), lastName, email, password: hashedPassword, username, DOB:formattedDOB, role });
     await newUser.save();
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {

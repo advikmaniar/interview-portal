@@ -12,6 +12,8 @@ const days = Array.from({ length: 31 }, (_, i) => i + 1);
 const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i);
 
 const RegistrationPage = () => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -32,8 +34,10 @@ const RegistrationPage = () => {
       return;
     }
     try {
-      await registerUser(email, password, username, dob, role);
+      await registerUser(firstName, lastName, email, password, username, dob, role);
       setMessage('Registration successful! Redirecting to login page...');
+      setFirstName('');
+      setLastName('');
       setEmail('');
       setPassword('');
       setConfirmPassword('');
@@ -87,6 +91,24 @@ const RegistrationPage = () => {
               Register
             </Typography>
             <form onSubmit={handleRegister}>
+              <TextField
+                label="First Name"
+                variant="outlined"
+                fullWidth
+                required
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                sx={{ marginBottom: 2 }}
+              />
+              <TextField
+                label="Last Name"
+                variant="outlined"
+                fullWidth
+                required
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                sx={{ marginBottom: 2 }}
+              />
               <TextField
                 label="Username"
                 variant="outlined"

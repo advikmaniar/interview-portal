@@ -1,3 +1,4 @@
+const Interviews = require('../models/Interviews');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
@@ -14,6 +15,8 @@ const getUserData = async (req, res) => {
         }
 
         res.status(200).json({
+          firstName: user.firstName,
+          lastName: user.lastName,
           username: user.username,
           email: user.email,
           DOB: user.DOB,
@@ -25,4 +28,35 @@ const getUserData = async (req, res) => {
       }
 };
 
-module.exports = { getUserData };
+const scheduleInterview = async (req, res) => {
+  const { date, candidateId, interviewerId, company, role, description } = req.body;
+  try {
+      const candidate = await User.findById(candidateId);
+      const interviewer = await User.findById(interviewerId);
+
+      if (!candidate || !interviewer) {
+          return res.status(404).json({ message: 'Candidate or Interviewer not found' });
+      }
+
+      if (candidate.role !== 'Candidate' || interviewer.role !== 'Interviewer') {
+          return res.status(400).json({ message: 'Invalid role types for Candidate or Interviewer' });
+      }
+
+      const newInterview = new Interviews({
+          date,
+          candidateId,
+          interviewerId,
+          company,
+          role,
+          description,
+      });
+
+      await newInterview.save();
+      res.status(201).json({ message: 'Interview scheduled successfully!', interview: newInterview });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error scheduling interview', error });
+  }
+}
+
+module.exports = { getUserData, scheduleInterview };
