@@ -1,5 +1,5 @@
-const Interviews = require('../models/Interviews');
 const User = require('../models/User');
+const Interviews = require('../models/Interviews')
 const jwt = require('jsonwebtoken');
 
 const getUserData = async (req, res) => {
@@ -59,4 +59,15 @@ const scheduleInterview = async (req, res) => {
   }
 }
 
-module.exports = { getUserData, scheduleInterview };
+const interviewsScheduled = async (req, res) => {
+  try {
+    const interviews = await Interviews.find({ interviewerId: req.user.id });
+    console.log("Interviews: ",interviews);
+    res.json(interviews);
+  } catch (error) {
+    console.error('Error fetching interviews:', error);
+    res.status(500).json({ error: 'Error fetching interviews' });
+  }
+}
+
+module.exports = { getUserData, scheduleInterview, interviewsScheduled };

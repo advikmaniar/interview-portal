@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 import {
-    Box,
-    Container,
-    Typography,
-    TextField,
-    Select,
-    MenuItem,
-    Button,
-    FormControl,
-    InputLabel,
-    TextareaAutosize,
-  } from '@mui/material';
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Select,
+  MenuItem,
+  Button,
+  FormControl,
+  InputLabel,
+  TextareaAutosize,
+} from '@mui/material';
 
 const ScheduleInterviewPopup = ({ onClose }) => {
   const [candidates, setCandidates] = useState([]);
@@ -24,27 +25,26 @@ const ScheduleInterviewPopup = ({ onClose }) => {
   const [description, setDescription] = useState('');
   const [error, setError] = useState('');
 
-//   const handleCandidateChange = (event) => {
-//     setSelectedCandidateId(event.target.value);
-//   };
-  
-//   const handleInterviewerChange = (event) => {
-//     setSelectedInterviewerId(event.target.value);
-//   };
-
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get('http://localhost:5000/users');
         console.log(response.data);
         const candidates = response.data.filter(user => user.role === 'Candidate');
-        const interviewers = response.data.filter(user => user.role === 'Interviewer');
+        // const interviewers = response.data.filter(user => user.role === 'Interviewer');
         setCandidates(candidates);
-        setInterviewers(interviewers);
+        // setInterviewers(interviewers);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     };
+     // Get user ID
+     const token = localStorage.getItem('token');
+     if (token) {
+       const decodedToken = jwtDecode(token);
+       console.log("UserId: "+ decodedToken.id);
+       setInterviewerId(decodedToken.id);
+     }
 
     fetchUsers();
   }, []);
@@ -142,7 +142,7 @@ const ScheduleInterviewPopup = ({ onClose }) => {
               </Select>
             </FormControl>
           </Box>
-          <Box sx={{ mb: 3 }}>
+          {/* <Box sx={{ mb: 3 }}>
             <FormControl fullWidth required>
               <InputLabel id="interviewer-label">Interviewer</InputLabel>
               <Select
@@ -160,7 +160,7 @@ const ScheduleInterviewPopup = ({ onClose }) => {
                 ))}
               </Select>
             </FormControl>
-          </Box>
+          </Box> */}
           <Box sx={{ mb: 3 }}>
             <TextField
               fullWidth
@@ -195,12 +195,26 @@ const ScheduleInterviewPopup = ({ onClose }) => {
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Button
+              type='submit'
               variant="contained"
               color="primary"
-              type="submit"
-              sx={{ textTransform: 'none' }}
+              sx={{
+                textTransform: 'none',
+                fontWeight: 'bold',
+                fontSize: '16px',
+                borderRadius: '8px',
+                padding: '10px 20px',
+                boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+                backgroundColor: '#2196f3',
+                ':hover': {
+                  backgroundColor: '#1976d2',
+                  boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
+                },
+              }}
             >
-              Schedule Interview
+              <Typography variant="button" color="inherit">
+                Schedule Interview
+              </Typography>
             </Button>
             <Button
               variant="outlined"

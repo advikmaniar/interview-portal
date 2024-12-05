@@ -6,6 +6,8 @@ import { Container, styled } from '@mui/system';
 import VideoChat from './VideoChat';
 import AppAppBar from './Header'
 import ScheduleInterviewPopup from './ScheduleInterviewPopup';
+import InterviewerPage from './InterviewerPage';
+import CandidatePage from './CandidatePage';
 
 
 const Dashboard = () => {
@@ -53,6 +55,7 @@ const Dashboard = () => {
                     flexDirection: { xs: "row", sm: "column" },
                     gap: { xs: 2, sm: 1 },
                     bgcolor: "blue",
+                    height: 600,
                     p: { xs: "30px 10px", sm: "50px 20px 50px 20px" },
                     alignItems: "center",
                 }}
@@ -81,47 +84,11 @@ const Dashboard = () => {
                 }}>
                     {/* Candidate Section */}
                     {userData.role === 'Candidate' && (
-                        <Container sx={{
-                            fontWeight: "bold",
-                            borderRadius: 5,
-                            boxShadow: 5,
-                            padding: "10px 20px 100px 20px",
-                            backgroundColor: '#1e1e1e',
-                            width: "fit-content"
-                        }}>
-                            <Typography variant="h5" gutterBottom>
-                                Your Scheduled Interviews
-                            </Typography>
-                            <ul>
-                                {userData.scheduledInterviews?.map((interview) => (
-                                    <li key={interview._id}>
-                                        {new Date(interview.dateTime).toLocaleString()} with {interview.interviewerName}
-                                    </li>
-                                ))}
-                            </ul>
-                        </Container>
+                        <CandidatePage />
                     )}
                     {/* Interviewer Section*/}
                     {userData.role === 'Interviewer' && (
-                        <Container sx={{
-                            fontWeight: "bold",
-                            borderRadius: 5,
-                            boxShadow: 5,
-                            padding: "10px 20px 100px 20px",
-                            backgroundColor: '#1e1e1e',
-                            width: "fit-content"
-                        }}>
-                            <Typography variant="h5" gutterBottom>
-                                Upcoming Interviews
-                            </Typography>
-                            <ul>
-                                {userData.scheduledInterviews?.map((interview) => (
-                                    <li key={interview._id}>
-                                        {new Date(interview.dateTime).toLocaleString()} with {interview.candidateName}
-                                    </li>
-                                ))}
-                            </ul>
-                        </Container>
+                        <InterviewerPage userData />
                     )}
                     {/* Feedback Section */}
                     <Container sx={{

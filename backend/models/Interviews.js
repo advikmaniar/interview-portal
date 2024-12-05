@@ -3,12 +3,12 @@ const mongoose = require('mongoose');
 const interviewsScheduledSchema = new mongoose.Schema({
     date: { type: Date, required: true },
     candidateId: { 
-        type: String,  
+        type: mongoose.Schema.Types.ObjectId,  
         ref: 'User',  
         required: true 
     },
     interviewerId: { 
-        type: String,  
+        type: mongoose.Schema.Types.ObjectId,  
         ref: 'User', 
         required: true 
     },
