@@ -61,7 +61,7 @@ const scheduleInterview = async (req, res) => {
 
 const interviewsScheduled = async (req, res) => {
   try {
-    const interviews = await Interviews.find({ interviewerId: req.user.id });
+    const interviews = await Interviews.find({ interviewerId: req.user.id }).populate('candidateId', 'firstName lastName');
     console.log("Interviews: ",interviews);
     res.json(interviews);
   } catch (error) {
@@ -70,4 +70,19 @@ const interviewsScheduled = async (req, res) => {
   }
 }
 
-module.exports = { getUserData, scheduleInterview, interviewsScheduled };
+const getInterviewById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const interview = await Interviews.findById(id).populate('candidateId');
+    if (interview) {
+      res.status(200).json(interview);
+    } else {
+      res.status(404).json({ message: 'Interview not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+module.exports = { getUserData, scheduleInterview, interviewsScheduled, getInterviewById };

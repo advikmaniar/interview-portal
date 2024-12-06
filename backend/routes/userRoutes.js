@@ -2,7 +2,6 @@ const express = require('express');
 const userController = require('../controllers/userController');
 const authenticate = require('../middleware/authMiddleware');
 const User = require('../models/User');
-const Interviews = require('../models/Interviews')
 const router = express.Router();
 
 router.get('/dashboard', authenticate, userController.getUserData);
@@ -10,6 +9,8 @@ router.get('/dashboard', authenticate, userController.getUserData);
 router.post('/interviews/schedule', userController.scheduleInterview);
 
 router.get('/interviews', authenticate, userController.interviewsScheduled);
+
+router.get('/:id', userController.getInterviewById);
 
 // Route to get all users (both interviewers and candidates)
 router.get('/', async (req, res) => {

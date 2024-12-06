@@ -19,6 +19,7 @@ app.use('/api', authRoutes);
 app.use('/profile', userRoutes);
 app.use('/users', userRoutes);
 app.use('/', userRoutes);
+app.use('/interviews', userRoutes);
 
 initializeSocketServer(server);
 

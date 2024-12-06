@@ -1,21 +1,16 @@
-// import React from 'react';
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Container, List, ListItem, ListItemText, IconButton, Menu, MenuItem } from '@mui/material';
+import { Box, Typography, Container, List, Divider, Button } from '@mui/material';
 import axios from 'axios';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import InterviewCard from './InterviewCard';
 
-
-const InterviewerPage = (userData) => {
-
+const InterviewerPage = () => {
   const [upcomingInterviews, setUpcomingInterviews] = useState([]);
   const [pastInterviews, setPastInterviews] = useState([]);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedInterview, setSelectedInterview] = useState(null);
 
   useEffect(() => {
     const fetchInterviews = async () => {
       try {
-        const token = localStorage.getItem('token'); // Retrieve token for authentication
+        const token = localStorage.getItem('token');
         const response = await axios.get('http://localhost:5000/interviews', {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -23,13 +18,13 @@ const InterviewerPage = (userData) => {
         const interviews = response.data;
         const currentDate = new Date();
 
-        // Separate interviews into upcoming and past
-        const upcoming = interviews.filter(
-          (interview) => new Date(interview.date) > currentDate
-        );
-        const past = interviews.filter(
-          (interview) => new Date(interview.date) <= currentDate
-        );
+        const upcoming = interviews
+          .filter((interview) => new Date(interview.date) > currentDate)
+          .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        const past = interviews
+          .filter((interview) => new Date(interview.date) <= currentDate)
+          .sort((a, b) => new Date(a.date) - new Date(b.date));
 
         setUpcomingInterviews(upcoming);
         setPastInterviews(past);
@@ -41,20 +36,8 @@ const InterviewerPage = (userData) => {
     fetchInterviews();
   }, []);
 
-  const handleMenuOpen = (event, interviewId) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedInterview(interviewId);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    setSelectedInterview(null);
-  };
-
-  const handleStatusChange = (status) => {
-    console.log(`Status changed to: ${status} for interview ID: ${selectedInterview}`);
-    handleMenuClose();
-    // Add your status change logic here (e.g., API call)
+  const handleEditButtonClick = (interview) => {
+    console.log("Edit Button Clicked for interview:", interview);
   };
 
   return (
@@ -64,10 +47,10 @@ const InterviewerPage = (userData) => {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'red',
+        backgroundColor: 'transparent',
         color: '#ffffff',
         borderRadius: 5,
-        padding: 3,
+        padding: 0,
       }}
     >
       {/* Upcoming Interviews */}
@@ -76,80 +59,89 @@ const InterviewerPage = (userData) => {
           fontWeight: 'bold',
           borderRadius: 5,
           boxShadow: 5,
-          padding: '10px',
-          backgroundColor: '#1e1e1e',
-          width: 600,
-          marginBottom: 4,
+          backgroundColor: '#333333',
+          marginBottom: 0.5,
+          '&:hover': {
+            boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
+            transform: 'translateY(-2px)',
+          },
         }}
       >
-        <Typography variant="h5" gutterBottom>
-          Upcoming Interviews
-        </Typography>
-        <List>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            backgroundColor: 'transparent',
+            alignItems: 'center',
+            width: '100%',
+            borderRadius: 5,
+            position: 'relative',
+            zIndex: 1000,
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              position: 'sticky',
+              top: 0,
+              zIndex: 1000,
+              padding: '10px',
+            }}
+          >
+            Upcoming Interviews
+          </Typography>
+          <Button
+            onClick={() => console.log('View All Clicked')}
+            variant="contained"
+            sx={{
+              bgcolor: "#2196f3",
+              color: "white",
+              borderRadius: "8px",
+              width: "fit-content",
+              boxShadow: 3,
+              transition: "all 0.3s ease",
+              margin: 1,
+              '&:hover': {
+                backgroundColor: '#1976d2',
+                boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
+                transform: "translateY(-2px)",
+              },
+            }}
+            endIcon={<span style={{ fontSize: '1em', fontWeight: 'bold' }}>→</span>}
+          >
+            View All
+          </Button>
+        </Box>
+        <Divider sx={{ marginTop: 0, marginBottom: 0 }} />
+        <List
+          sx={{
+            maxHeight: upcomingInterviews.length >= 4 ? 300 : 'none',
+            overflowY: upcomingInterviews.length >= 4 ? 'auto' : 'visible',
+            '&::-webkit-scrollbar': {
+              width: '6px',
+              backgroundColor: '#1e1e1e',
+              borderRadius: '30%',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: '#555',
+              borderRadius: '50%',
+              border: '2px solid #333',
+            },
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: '#222',
+              borderRadius: '50%',
+            },
+            maxHeight: 'calc(300px - 40px)',
+            padding: "0px 0px 10px 0px"
+          }}
+        >
           {upcomingInterviews.length > 0 ? (
             upcomingInterviews.map((interview) => (
-              <ListItem key={interview._id}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'left',
-                    justifyItems: 'left',
-                    backgroundColor: 'red',
-                    color: '#ffffff',
-                    borderRadius: 5,
-                    width:'100%',
-                  }}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'left',
-                      justifyItems: 'left',
-                      backgroundColor: 'green',
-                      boxShadow: 3,
-                      borderRadius: 2
-                    }}>
-                    <ListItemText
-                      primary={`${interview.role} at ${interview.company} - > ${new Date(interview.date).toLocaleString()}`}
-                      // secondary={` ${new Date(interview.date).toLocaleString()}`}
-                    />
-                  </Box>
-                  <Box
-                    sx={{
-                      marginLeft: 'auto',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyItems: 'center',
-                      height: '100%',
-                    }}
-                  >
-                    <IconButton
-                      size="small"
-                      onClick={(event) => handleMenuOpen(event, interview._id)}
-                      sx={{
-                        backgroundColor: 'grey',
-                        color: '#ffffff',
-                        borderRadius: '50%',
-                        padding: '5px',
-                        boxShadow:5,
-                        ':hover': { backgroundColor: 'lightgrey' },
-                      }}
-                    >
-                      <MoreVertIcon />
-                    </IconButton>
-                    <Menu
-                      anchorEl={anchorEl}
-                      open={Boolean(anchorEl) && selectedInterview === interview._id}
-                      onClose={handleMenuClose}
-                    >
-                      <MenuItem onClick={() => handleStatusChange('Completed')}>Completed</MenuItem>
-                      <MenuItem onClick={() => handleStatusChange('Rescheduled')}>Rescheduled</MenuItem>
-                      <MenuItem onClick={() => handleStatusChange('Cancelled')}>Cancelled</MenuItem>
-                    </Menu>
-                  </Box>
-                </Box>
-
-              </ListItem>
+              <InterviewCard
+                key={interview._id}
+                interview={interview}
+                onEdit={handleEditButtonClick}
+              />
             ))
           ) : (
             <Typography>No upcoming interviews</Typography>
@@ -163,23 +155,87 @@ const InterviewerPage = (userData) => {
           fontWeight: 'bold',
           borderRadius: 5,
           boxShadow: 5,
-          padding: '20px',
-          backgroundColor: '#1e1e1e',
-          width: 'fit-content',
+          p: '5px 0px 0px 0px',
+          backgroundColor: '#333333',
+          marginBottom: 0.5,
+          '&:hover': {
+            boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
+            transform: 'translateY(-2px)',
+          },
         }}
       >
-        <Typography variant="h5" gutterBottom>
-          Past Interviews
-        </Typography>
-        <List>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: '100%',
+            position: 'relative',
+            zIndex: 1000,
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              position: 'sticky',
+              top: 0,
+              zIndex: 1000,
+              padding: '10px',
+            }}
+          >
+            Past Interviews
+          </Typography>
+          <Button
+            onClick={() => console.log('View All Clicked')}
+            variant="contained"
+            sx={{
+              bgcolor: "#2196f3",
+              color: "white",
+              borderRadius: "8px",
+              width: "fit-content",
+              boxShadow: 3,
+              transition: "all 0.3s ease",
+              margin: 1,
+              '&:hover': {
+                backgroundColor: '#1976d2',
+                boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
+                transform: "translateY(-2px)",
+              },
+            }}
+            endIcon={<span style={{ fontSize: '1em', fontWeight: 'bold' }}>→</span>}
+          >
+            View All
+          </Button>
+        </Box>
+        <Divider sx={{ marginTop: 0, marginBottom: 0 }} />
+        <List
+          disablePadding
+          sx={{
+            maxHeight: pastInterviews.length >= 4 ? 300 : 'none',
+            overflowY: pastInterviews.length >= 4 ? 'auto' : 'visible',
+            '&::-webkit-scrollbar': {
+              width: '6px',
+              backgroundColor: '#1e1e1e',
+              borderRadius: '30%',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: '#555',
+              borderRadius: '50%',
+              border: '2px solid #333',
+            },
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: '#222',
+            },
+            maxHeight: 'calc(300px - 40px)',
+          }}
+        >
           {pastInterviews.length > 0 ? (
             pastInterviews.map((interview) => (
-              <ListItem key={interview._id}>
-                <ListItemText
-                  primary={`${interview.role} at ${interview.company}`}
-                  secondary={`Date: ${new Date(interview.date).toLocaleString()}`}
-                />
-              </ListItem>
+              <InterviewCard
+                key={interview._id}
+                interview={interview}
+                onEdit={handleEditButtonClick}
+              />
             ))
           ) : (
             <Typography>No past interviews</Typography>
@@ -188,6 +244,6 @@ const InterviewerPage = (userData) => {
       </Container>
     </Box>
   );
-}
+};
 
 export default InterviewerPage;

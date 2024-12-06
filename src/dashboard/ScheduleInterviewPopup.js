@@ -3,53 +3,54 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import {
   Box,
-  Container,
   Typography,
   TextField,
   Select,
   MenuItem,
+  IconButton,
   Button,
   FormControl,
   InputLabel,
   TextareaAutosize,
+  Modal,
+  Paper,
+  CircularProgress,
 } from '@mui/material';
+import { Close as CloseIcon } from '@mui/icons-material';
 
 const ScheduleInterviewPopup = ({ onClose }) => {
   const [candidates, setCandidates] = useState([]);
-  const [interviewers, setInterviewers] = useState([]);
   const [date, setDate] = useState('');
   const [candidateId, setCandidateId] = useState('');
-  const [interviewerId, setInterviewerId] = useState('');
   const [company, setCompany] = useState('');
   const [role, setRole] = useState('');
   const [description, setDescription] = useState('');
   const [error, setError] = useState('');
+  const [interviewerId, setInterviewerId] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get('http://localhost:5000/users');
-        console.log(response.data);
         const candidates = response.data.filter(user => user.role === 'Candidate');
-        // const interviewers = response.data.filter(user => user.role === 'Interviewer');
         setCandidates(candidates);
-        // setInterviewers(interviewers);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     };
-     // Get user ID
-     const token = localStorage.getItem('token');
-     if (token) {
-       const decodedToken = jwtDecode(token);
-       console.log("UserId: "+ decodedToken.id);
-       setInterviewerId(decodedToken.id);
-     }
+
+    // Get user ID from the token
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      setInterviewerId(decodedToken.id);
+    }
 
     fetchUsers();
+    setLoading(false);
   }, []);
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -79,30 +80,41 @@ const ScheduleInterviewPopup = ({ onClose }) => {
   };
 
   return (
-    <Box
+    <Modal
+      open={true} 
+      onClose={onClose}
       sx={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        bgcolor: 'rgba(0, 0, 0, 0.7)',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        zIndex: 1300,
+        outline: 'none',
       }}
     >
-      <Container
-        maxWidth="sm"
+      <Paper
+        elevation={3}
         sx={{
-          bgcolor: 'background.paper',
-          borderRadius: 2,
-          boxShadow: 24,
-          p: 4,
           position: 'relative',
+          width: { xs: '90%', sm: '60%', md: '40%' },
+          maxHeight: '80%',
+          overflowY: 'auto',
+          p: 4,
         }}
       >
+        <IconButton
+          onClick={onClose}
+          sx={{
+            position: 'absolute',
+            top: 8,
+            right: 8,
+            color: 'gray',
+            '&:hover': {
+              backgroundColor: 'transparent',
+              color: 'black',
+            },
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
         <Typography variant="h5" gutterBottom align="center">
           Schedule an Interview
         </Typography>
@@ -111,123 +123,109 @@ const ScheduleInterviewPopup = ({ onClose }) => {
             {error}
           </Typography>
         )}
-        <form onSubmit={handleSubmit}>
-          <Box sx={{ mb: 3 }}>
-            <TextField
-              fullWidth
-              type="datetime-local"
-              label="Date and Time"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-              required
-            />
+        {loading ? (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%',
+            }}
+          >
+            <CircularProgress />
           </Box>
-          <Box sx={{ mb: 3 }}>
-            <FormControl fullWidth required>
-              <InputLabel id="candidate-label">Candidate</InputLabel>
-              <Select
-                labelId="candidate-label"
-                value={candidateId}
-                onChange={(e) => setCandidateId(e.target.value)}
-              >
-                <MenuItem value="">
-                  <em>Select Candidate</em>
-                </MenuItem>
-                {candidates.map((candidate) => (
-                  <MenuItem key={candidate._id} value={candidate._id}>
-                    {candidate.firstName} {candidate.lastName}
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <Box sx={{ mb: 3 }}>
+              <TextField
+                fullWidth
+                type="datetime-local"
+                label="Date and Time"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                required
+              />
+            </Box>
+            <Box sx={{ mb: 3 }}>
+              <FormControl fullWidth required>
+                <InputLabel id="candidate-label">Candidate</InputLabel>
+                <Select
+                  labelId="candidate-label"
+                  value={candidateId}
+                  onChange={(e) => setCandidateId(e.target.value)}
+                >
+                  <MenuItem value="">
+                    <em>Select Candidate</em>
                   </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-          {/* <Box sx={{ mb: 3 }}>
-            <FormControl fullWidth required>
-              <InputLabel id="interviewer-label">Interviewer</InputLabel>
-              <Select
-                labelId="interviewer-label"
-                value={interviewerId}
-                onChange={(e) => setInterviewerId(e.target.value)}
+                  {candidates.map((candidate) => (
+                    <MenuItem key={candidate._id} value={candidate._id}>
+                      {candidate.firstName} {candidate.lastName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+            <Box sx={{ mb: 3 }}>
+              <TextField
+                fullWidth
+                label="Company"
+                value={company}
+                onChange={(e) => setCompany(e.target.value)}
+                required
+              />
+            </Box>
+            <Box sx={{ mb: 3 }}>
+              <TextField
+                fullWidth
+                label="Role"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                required
+              />
+            </Box>
+            <Box sx={{ mb: 3 }}>
+              <TextareaAutosize
+                minRows={3}
+                placeholder="Description"
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  borderRadius: '4px',
+                  border: '1px solid #ccc',
+                }}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{
+                  textTransform: 'none',
+                  fontWeight: 'bold',
+                  fontSize: '16px',
+                  borderRadius: '8px',
+                  padding: '10px 20px',
+                  boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+                  backgroundColor: '#2196f3',
+                  ':hover': {
+                    backgroundColor: '#1976d2',
+                    boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
+                  },
+                }}
               >
-                <MenuItem value="">
-                  <em>Select Interviewer</em>
-                </MenuItem>
-                {interviewers.map((interviewer) => (
-                  <MenuItem key={interviewer._id} value={interviewer._id}>
-                    {interviewer.firstName} {interviewer.lastName}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box> */}
-          <Box sx={{ mb: 3 }}>
-            <TextField
-              fullWidth
-              label="Company"
-              value={company}
-              onChange={(e) => setCompany(e.target.value)}
-              required
-            />
-          </Box>
-          <Box sx={{ mb: 3 }}>
-            <TextField
-              fullWidth
-              label="Role"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              required
-            />
-          </Box>
-          <Box sx={{ mb: 3 }}>
-            <TextareaAutosize
-              minRows={3}
-              placeholder="Description"
-              style={{
-                width: '100%',
-                padding: '10px',
-                borderRadius: '4px',
-                border: '1px solid #ccc',
-              }}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Button
-              type='submit'
-              variant="contained"
-              color="primary"
-              sx={{
-                textTransform: 'none',
-                fontWeight: 'bold',
-                fontSize: '16px',
-                borderRadius: '8px',
-                padding: '10px 20px',
-                boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-                backgroundColor: '#2196f3',
-                ':hover': {
-                  backgroundColor: '#1976d2',
-                  boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
-                },
-              }}
-            >
-              <Typography variant="button" color="inherit">
-                Schedule Interview
-              </Typography>
-            </Button>
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={onClose}
-              sx={{ textTransform: 'none' }}
-            >
-              Close
-            </Button>
-          </Box>
-        </form>
-      </Container>
-    </Box>
+                <Typography variant="button" color="inherit">
+                  Schedule Interview
+                </Typography>
+              </Button>
+            </Box>
+          </form>
+        )}
+      </Paper>
+    </Modal>
   );
 };
 

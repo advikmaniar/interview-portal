@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, Paper } from '@mui/material';
 import { Container, styled } from '@mui/system';
-import VideoChat from './VideoChat';
 import AppAppBar from './Header'
 import ScheduleInterviewPopup from './ScheduleInterviewPopup';
 import InterviewerPage from './InterviewerPage';
@@ -44,7 +43,8 @@ const Dashboard = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 minHeight: '100vh',
-                backgroundColor: '#121212',
+                backgroundColor: '#696969',
+                paddingTop: '64px',
                 color: '#ffffff',
             }}
         >
@@ -54,33 +54,22 @@ const Dashboard = () => {
                     display: "flex",
                     flexDirection: { xs: "row", sm: "column" },
                     gap: { xs: 2, sm: 1 },
-                    bgcolor: "blue",
-                    height: 600,
-                    p: { xs: "30px 10px", sm: "50px 20px 50px 20px" },
+                    bgcolor: "transparent",
+                    // height: 'auto', // Use auto or set a fixed height if needed
+                    // maxHeight: 'calc(100vh - 64px)',
                     alignItems: "center",
                 }}
             >
-                {/* <Container sx={{
-                    flex: { xs: 4, sm: 2 },
-                    fontSize: 40,
-                    width: "fit-content",
-                    fontWeight: "bold",
-                    borderRadius: 5,
-                    boxShadow: 5,
-                    padding: "100px 20px 100px 20px",
-                    backgroundColor: '#1e1e1e',
-
-                }}>
-                    Welcome, {userData?.firstName}
-                </Container> */}
                 <Container sx={{
                     display: 'flex',
-                    height: '100%',
+                    flexDirection: "row",
+                    height: 'auto', 
+                    maxHeight: 'auto',
                     backgroundColor: "white",
                     flex: { xs: 1, sm: 3 },
-                    flexDirection: "row",
-                    borderRadius: 10
-                    // width: "100%"
+                    borderRadius: 5,
+                    // boxShadow: 5,
+                    py: '20px',
                 }}>
                     {/* Candidate Section */}
                     {userData.role === 'Candidate' && (
@@ -88,7 +77,7 @@ const Dashboard = () => {
                     )}
                     {/* Interviewer Section*/}
                     {userData.role === 'Interviewer' && (
-                        <InterviewerPage userData />
+                        <InterviewerPage />
                     )}
                     {/* Feedback Section */}
                     <Container sx={{
