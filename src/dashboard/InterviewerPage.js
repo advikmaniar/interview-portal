@@ -18,12 +18,28 @@ const InterviewerPage = () => {
         const interviews = response.data;
         const currentDate = new Date();
 
-        const upcoming = interviews
-          .filter((interview) => new Date(interview.date) > currentDate)
+        const updatedInterviews = interviews.map((interview) => {
+          const interviewDate = new Date(interview.date);
+          if (interviewDate < currentDate && interview.status !== 'Completed' && interview.status !== 'Cancelled') {
+            interview.status = 'Overdue';
+          }
+          return interview;
+        });
+
+        const upcoming = updatedInterviews
+          .filter(
+            (interview) =>
+              new Date(interview.date) > currentDate &&
+              !['Completed', 'Cancelled'].includes(interview.status)
+          )
           .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-        const past = interviews
-          .filter((interview) => new Date(interview.date) <= currentDate)
+          const past = interviews
+          .filter(
+            (interview) =>
+              new Date(interview.date) <= currentDate ||
+              ['Completed', 'Cancelled'].includes(interview.status)
+          )
           .sort((a, b) => new Date(a.date) - new Date(b.date));
 
         setUpcomingInterviews(upcoming);
@@ -38,6 +54,12 @@ const InterviewerPage = () => {
 
   const handleEditButtonClick = (interview) => {
     console.log("Edit Button Clicked for interview:", interview);
+  };
+
+  const handleDeleteInterview = (interviewId) => {
+    setPastInterviews((prevPastInterviews) =>
+      prevPastInterviews.filter((interview) => interview._id !== interviewId)
+    );
   };
 
   return (
@@ -141,6 +163,7 @@ const InterviewerPage = () => {
                 key={interview._id}
                 interview={interview}
                 onEdit={handleEditButtonClick}
+                isPastInterview={false}
               />
             ))
           ) : (
@@ -235,6 +258,8 @@ const InterviewerPage = () => {
                 key={interview._id}
                 interview={interview}
                 onEdit={handleEditButtonClick}
+                isPastInterview={true}
+                onDelete={handleDeleteInterview}
               />
             ))
           ) : (

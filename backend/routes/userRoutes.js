@@ -5,13 +5,10 @@ const User = require('../models/User');
 const router = express.Router();
 
 router.get('/dashboard', authenticate, userController.getUserData);
-
 router.post('/interviews/schedule', userController.scheduleInterview);
-
 router.get('/interviews', authenticate, userController.interviewsScheduled);
-
 router.get('/:id', userController.getInterviewById);
-
+router.put('/:id', userController.updateInterview);
 // Route to get all users (both interviewers and candidates)
 router.get('/', async (req, res) => {
     try {

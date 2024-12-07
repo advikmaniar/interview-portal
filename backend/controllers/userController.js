@@ -29,7 +29,7 @@ const getUserData = async (req, res) => {
 };
 
 const scheduleInterview = async (req, res) => {
-  const { date, candidateId, interviewerId, company, role, description } = req.body;
+  const { date, candidateId, interviewerId, company, role, status, type, notes } = req.body;
   try {
       const candidate = await User.findById(candidateId);
       const interviewer = await User.findById(interviewerId);
@@ -48,7 +48,9 @@ const scheduleInterview = async (req, res) => {
           interviewerId,
           company,
           role,
-          description,
+          status,
+          type,
+          notes,
       });
 
       await newInterview.save();
@@ -85,4 +87,25 @@ const getInterviewById = async (req, res) => {
   }
 };
 
-module.exports = { getUserData, scheduleInterview, interviewsScheduled, getInterviewById };
+const updateInterview = async (req, res) => {
+  const interviewId = req.params.id;
+  const updates = req.body;
+  try {
+    const updatedInterview = await Interviews.findByIdAndUpdate(
+        interviewId,
+        updates,
+        { new: true }
+    );
+
+    if (!updatedInterview) {
+        return res.status(404).json({ message: 'Interview not found.' });
+    }
+
+    res.status(200).json(updatedInterview);
+} catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to update interview details.', error });
+}
+}
+
+module.exports = { getUserData, scheduleInterview, interviewsScheduled, getInterviewById, updateInterview};

@@ -14,7 +14,7 @@ const interviewsScheduledSchema = new mongoose.Schema({
     },
     company: { type: String, required: true  },
     role: { type: String, required: true },
-    description: { type: String },
+    notes: { type: String },
     level: { 
         type: String, 
         enum: ['Initial', 'Intermediate', 'Final'], 
@@ -23,11 +23,11 @@ const interviewsScheduledSchema = new mongoose.Schema({
     type: { 
         type: String, 
         enum: ['Behavioural Round', 'Technical Round', 'Resume Review'], 
-        default: 'Initial' 
+        default: 'Resume Review' 
     },
     status: { 
         type: String, 
-        enum: ['Scheduled', 'Completed', 'Canceled'], 
+        enum: ['Scheduled', 'Completed', 'Canceled' ,'Overdue'], 
         default: 'Scheduled' 
     },
 }, { timestamps: true });
