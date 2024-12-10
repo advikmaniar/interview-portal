@@ -1,27 +1,24 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const connectDB = require('./config/database');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
-require('dotenv').config();
-const initializeSocketServer = require('./socketServer');
-const http = require('http');
+const interviewRoutes = require('./routes/interviewRoutes');
 
 const app = express();
-const server = http.createServer(app);
 
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
 
 connectDB();
-app.use('/api', authRoutes);
-app.use('/profile', userRoutes);
-app.use('/users', userRoutes);
-app.use('/', userRoutes);
-app.use('/interviews', userRoutes);
 
-initializeSocketServer(server);
+app.use('/api/auth', authRoutes);   
+app.use('/api/users', userRoutes); 
+
+// Interview Room
+app.use('/api/interviews', interviewRoutes);
 
 
 // Start Server

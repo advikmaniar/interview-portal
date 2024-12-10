@@ -30,6 +30,7 @@ const interviewsScheduledSchema = new mongoose.Schema({
         enum: ['Scheduled', 'Completed', 'Canceled' ,'Overdue'], 
         default: 'Scheduled' 
     },
+    roomSid: { type: String },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Interviews', interviewsScheduledSchema);

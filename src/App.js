@@ -4,6 +4,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegistrationPage';
+import VideoCall from './components/VideoCall';
 import Dashboard from './dashboard/Dashboard';
 
 const theme = createTheme({
@@ -31,6 +32,7 @@ const App = () => {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<Dashboard />} />
+        <Route path="/video-call/:roomSid" element={<VideoCall />} />
       </Routes>
     </Router>
     </ThemeProvider>

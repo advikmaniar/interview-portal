@@ -5,17 +5,18 @@ export const CustomButton = ({ onClick, text }) => (
     <Button
         onClick={onClick}
         variant="contained"
-        color="primary"
         sx={{
             textTransform: 'none',
             fontWeight: 'bold',
             fontSize: '16px',
             borderRadius: '8px',
-            padding: '10px 20px',
+            padding: '5px 20px',
             boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-            backgroundColor: '#2196f3',
+            color: 'black',
+            backgroundColor: 'white',
             ':hover': {
-                backgroundColor: '#1976d2',
+                backgroundColor: 'black',
+                color: 'white',
                 boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
             },
         }}

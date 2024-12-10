@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography, Container, List, Divider, Button } from '@mui/material';
 import axios from 'axios';
 import InterviewCard from './InterviewCard';
+import { CustomButton } from '../utils/utils';
 
 const InterviewerPage = () => {
   const [upcomingInterviews, setUpcomingInterviews] = useState([]);
@@ -11,7 +12,7 @@ const InterviewerPage = () => {
     const fetchInterviews = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/interviews', {
+        const response = await axios.get('http://localhost:5000/api/interviews/interviews', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -34,7 +35,7 @@ const InterviewerPage = () => {
           )
           .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-          const past = interviews
+        const past = interviews
           .filter(
             (interview) =>
               new Date(interview.date) <= currentDate ||
@@ -81,11 +82,11 @@ const InterviewerPage = () => {
           fontWeight: 'bold',
           borderRadius: 5,
           boxShadow: 5,
-          backgroundColor: '#333333',
+          backgroundColor: '#24272B',
           marginBottom: 0.5,
           '&:hover': {
             boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
-            transform: 'translateY(-2px)',
+
           },
         }}
       >
@@ -112,27 +113,12 @@ const InterviewerPage = () => {
           >
             Upcoming Interviews
           </Typography>
-          <Button
+          <CustomButton
             onClick={() => console.log('View All Clicked')}
-            variant="contained"
-            sx={{
-              bgcolor: "#2196f3",
-              color: "white",
-              borderRadius: "8px",
-              width: "fit-content",
-              boxShadow: 3,
-              transition: "all 0.3s ease",
-              margin: 1,
-              '&:hover': {
-                backgroundColor: '#1976d2',
-                boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
-                transform: "translateY(-2px)",
-              },
-            }}
-            endIcon={<span style={{ fontSize: '1em', fontWeight: 'bold' }}>→</span>}
+            text={'View All'}
           >
-            View All
-          </Button>
+          </CustomButton>
+
         </Box>
         <Divider sx={{ marginTop: 0, marginBottom: 0 }} />
         <List
@@ -179,11 +165,10 @@ const InterviewerPage = () => {
           borderRadius: 5,
           boxShadow: 5,
           p: '5px 0px 0px 0px',
-          backgroundColor: '#333333',
+          backgroundColor: '#24272B',
           marginBottom: 0.5,
           '&:hover': {
             boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
-            transform: 'translateY(-2px)',
           },
         }}
       >
@@ -208,27 +193,11 @@ const InterviewerPage = () => {
           >
             Past Interviews
           </Typography>
-          <Button
+          <CustomButton
             onClick={() => console.log('View All Clicked')}
-            variant="contained"
-            sx={{
-              bgcolor: "#2196f3",
-              color: "white",
-              borderRadius: "8px",
-              width: "fit-content",
-              boxShadow: 3,
-              transition: "all 0.3s ease",
-              margin: 1,
-              '&:hover': {
-                backgroundColor: '#1976d2',
-                boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
-                transform: "translateY(-2px)",
-              },
-            }}
-            endIcon={<span style={{ fontSize: '1em', fontWeight: 'bold' }}>→</span>}
+            text={'View All'}
           >
-            View All
-          </Button>
+          </CustomButton>
         </Box>
         <Divider sx={{ marginTop: 0, marginBottom: 0 }} />
         <List
