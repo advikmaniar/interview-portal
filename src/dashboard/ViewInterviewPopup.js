@@ -26,7 +26,7 @@ const ViewInterviewPopup = ({ interviewId, onClose }) => {
     useEffect(() => {
         const fetchInterviewDetails = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/interviews/${interviewId}`, {
+                const response = await axios.get(`http://localhost:5000/api/interviews/${interviewId}`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                     },
@@ -57,7 +57,7 @@ const ViewInterviewPopup = ({ interviewId, onClose }) => {
     const handleSaveChanges = async () => {
         try {
             const response = await axios.put(
-                `http://localhost:5000/interviews/${interviewId}`,
+                `http://localhost:5000/api/interviews/${interviewId}`,
                 updatedDetails,
                 {
                     headers: {

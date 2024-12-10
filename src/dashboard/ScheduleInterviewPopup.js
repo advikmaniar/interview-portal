@@ -32,8 +32,13 @@ const ScheduleInterviewPopup = ({ onClose }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/users');
+        const response = await axios.get('http://localhost:5000/api/users', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+      });
         const candidates = response.data.filter(user => user.role === 'Candidate');
+        console.log("Candidates: "+ candidates);
         setCandidates(candidates);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -64,7 +69,7 @@ const ScheduleInterviewPopup = ({ onClose }) => {
         description,
       };
 
-      const response = await axios.post('http://localhost:5000/interviews/schedule', interviewData, {
+      const response = await axios.post('http://localhost:5000/api/interviews/interviews/schedule', interviewData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },

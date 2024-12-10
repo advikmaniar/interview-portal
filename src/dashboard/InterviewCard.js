@@ -38,7 +38,7 @@ const InterviewCard = ({ interview, isPastInterview, onDelete, onStatusUpdate })
     const handleStatusChange = async (newStatus) => {
         setLoading(true);
         try {
-            await axios.put(`http://localhost:5000/interviews/${interview._id}`, {
+            await axios.put(`http://localhost:5000/api/interviews/${interview._id}`, {
                 status: newStatus,
             });
             setStatus(newStatus);
@@ -65,15 +65,18 @@ const InterviewCard = ({ interview, isPastInterview, onDelete, onStatusUpdate })
                         display: 'flex',
                         flexDirection: 'row',
                         alignItems: 'center',
-                        backgroundColor: '#424B52',
+                        backgroundColor: '#4A525A',
                         color: '#ffffff',
-                        borderRadius: '50px 20px 20px 50px',
+                        borderRadius: '50px 50px 50px 50px',
                         width: '100%',
                         p: '0px 20px 0px 0px',
+                        title: 'View Interview Details',
                         '&:hover': {
-                            backgroundColor: '#5A676D',
+                            backgroundColor: '#6D757D',
                             boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
                             transform: 'translateY(-2px)',
+
+
                         },
                         cursor: 'pointer',
                     }}
