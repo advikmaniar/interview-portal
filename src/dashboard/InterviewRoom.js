@@ -3,17 +3,33 @@ import { Card, CardContent, Typography, Grid, Box, Button, Container } from '@mu
 import AppAppBar from './Header';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { CustomButton } from '../utils/utils';
+import { CustomButton, Tag } from '../utils/utils';
+import EditIcon from '@mui/icons-material/Edit';
+import ViewInterviewPopup from './ViewInterviewPopup';
 
-const InterviewRoomPage = () => {
+const InterviewRoom = () => {
     const [upcomingInterviews, setUpcomingInterviews] = useState([]);
     const [pastInterviews, setPastInterviews] = useState([]);
     const navigate = useNavigate();
+    const token = localStorage.getItem('token');
+
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [selectedInterview, setSelectedInterview] = useState(null);
+
+    const handleEditClick = (interview) => {
+        console.log("Edit button clicked");
+        console.log("Selected Interview: ", interview);  // Make sure this is logging correctly
+        setSelectedInterview(interview);  // Set the selected interview
+        setIsPopupOpen(true);  // Open the popup
+    };
+
+    const handleClosePopup = () => {
+        setIsPopupOpen(false);
+    };
 
     useEffect(() => {
         const fetchInterviews = async () => {
             try {
-                const token = localStorage.getItem('token');
                 const response = await axios.get('http://localhost:5000/api/interviews/interviews', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
@@ -60,45 +76,29 @@ const InterviewRoomPage = () => {
         fetchInterviews();
     }, []);
 
-    const getStatusStyles = (status) => {
-        let color;
-        switch (status) {
-            case 'Completed':
-                color = 'rgba(56, 142, 60, 0.7)'; // Green
-                break;
-            case 'Overdue':
-                color = 'rgba(244, 67, 54, 0.7)'; // Red
-                break;
-            case 'Scheduled':
-                color = 'rgba(255, 193, 7, 0.7)'; // Yellow
-                break;
-            default:
-                color = 'rgba(33, 150, 243, 0.7)'; // Blue
-        }
-        return {
-            backgroundColor: color,
-            color: '#000',
-            padding: '4px 8px',
-            borderRadius: 5,
-            fontSize: '12px',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            display: 'inline-block',
-            boxShadow: 5,
-        };
-    };
-
-    const handleInitiateVideoCall = async () => {
+    const handleInitiateVideoCall = async (interviewId) => {
         const roomName = `Room-${new Date().getTime()}`;
 
         try {
-            const response = await axios.post('http://localhost:5000/api/interviews/create-room', { roomName });
+            const response = await axios.post(
+                'http://localhost:5000/api/interviews/create-room',
+                {
+                    roomName,
+                    interviewId
+                },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
 
             if (response.data && response.data.roomSid && response.data.roomName) {
                 const { roomSid, roomName } = response.data;
                 console.log(`Room created: ${roomSid}, ${roomName}`);
 
-                navigate(`/video-call/${roomSid}`, { state: { roomName } });
+                navigate(`/video-call/${roomSid}`, {
+                    state: {
+                        roomName,
+                        interviewId
+                    }
+                });
             } else {
                 console.error('Invalid response data', response.data);
             }
@@ -107,7 +107,7 @@ const InterviewRoomPage = () => {
         }
     };
 
-    const renderInterviews = (interviews) =>
+    const renderInterviews = (interviews, isUpcoming) =>
         interviews.map((interview, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
                 <Box
@@ -116,7 +116,7 @@ const InterviewRoomPage = () => {
                         flexDirection: 'column',
                         justifyContent: 'space-between',
                         height: '100%',
-                        backgroundColor: '#24272B',
+                        backgroundColor: '#4A525A',
                         borderRadius: 5,
                         boxShadow: 5,
                         padding: 0,
@@ -132,7 +132,7 @@ const InterviewRoomPage = () => {
                     <CardContent
                         sx={{
                             flexGrow: 1,
-                            backgroundColor: "red",
+                            backgroundColor: "transparent",
                             borderRadius: 5,
                             p: "10px 10px 5px 10px"
                         }}>
@@ -142,7 +142,7 @@ const InterviewRoomPage = () => {
                                 flexDirection: 'row',
                                 alignItems: "center",
                                 gap: 1,
-                                backgroundColor: '#4A525A',
+                                backgroundColor: '#939396',
                                 borderRadius: 10,
                                 boxShadow: 5,
                                 color: '#ffffff',
@@ -162,7 +162,13 @@ const InterviewRoomPage = () => {
                                     {interview.role}
                                 </Typography>
                             </Box>
-                            <Box>Edit Icon</Box>
+                            <Box
+                                onClick={() => {
+                                    handleEditClick(interview)
+                                }}
+                                sx={{ cursor: 'pointer' }}>
+                                <EditIcon />
+                            </Box>
                         </Box>
                         <Box
                             sx={{
@@ -173,87 +179,155 @@ const InterviewRoomPage = () => {
                                 padding: '5px 8px',
                                 borderRadius: 10,
                             }}>
-                            <Typography variant="body1">
-                                <strong>Candidate:</strong> {interview.candidateId.firstName} {interview.candidateId.lastName}
-                            </Typography>
-                            <Typography variant="body2">
-                                <strong>Date:</strong> {new Date(interview.date).toLocaleString()}
-                            </Typography>
-                            <Typography variant="body2">
-                                <strong>Level:</strong> {interview.level}
-                            </Typography>
-                            <Typography variant="body2">
-                                <strong>Type:</strong> {interview.type}
-                            </Typography>
                             <Box>
-                                <Box sx={getStatusStyles(interview.status)}>{interview.status}</Box>
+                                <Typography variant="body1">
+                                    <strong>Candidate:</strong> {interview.candidateId.firstName} {interview.candidateId.lastName}
+                                </Typography>
+                            </Box>
+                            <Box>
+                                <Typography variant="body2">
+                                    <strong>Date:</strong> {new Date(interview.date).toLocaleString()}
+                                </Typography>
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    padding: '5px 8px',
+                                    gap: 1
+                                }}>
+                                <Box>
+                                    <Tag value={interview.level} type="level" />
+                                </Box>
+                                <Box>
+                                    <Tag value={interview.type} type="type" />
+                                </Box>
+                                <Box>
+                                    <Tag value={interview.status} type="status" />
+                                </Box>
                             </Box>
                         </Box>
                     </CardContent>
-                    <Box
-                        sx={{
-                            justifyContent: 'center',
-                            alignItems: "center",
-                            p: '0px 0px 10px 10px',
-                        }}>
-                        <CustomButton
-                            onClick={handleInitiateVideoCall}
-                            text="Start Meeting"
-                        >
-                        </CustomButton>
-                    </Box>
+                    {isUpcoming && (
+                        <Box
+                            sx={{
+                                justifyContent: 'center',
+                                alignItems: "center",
+                                p: '0px 0px 10px 10px',
+                            }}>
+                            <CustomButton
+                                onClick={
+                                    () => {
+                                        handleInitiateVideoCall(interview._id);
+                                    }}
+                                text="Start Meeting"
+                            >
+                            </CustomButton>
+                        </Box>
+                    )}
                 </Box>
             </Grid>
         ));
 
     return (
-        <Box
-            sx={{
-                backgroundColor: '#696969',
-                color: '#ffffff',
-                minHeight: '100vh',
-                paddingTop: '64px',
-                paddingBottom: '32px',
-            }}
-        >
-            <AppAppBar />
-            <Container
+        <>
+            <Box
                 sx={{
-                    display: "flex",
-                    flexDirection: { xs: "row", sm: "column" },
-                    gap: { xs: 2, sm: 1 },
-                    bgcolor: "green",
-                    marginTop: 7,
-                    alignItems: "center",
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: '100vh',
+                    backgroundColor: '#696969',
+                    color: '#ffffff',
                 }}
             >
-                <Box sx={{ padding: '16px' }}>
-                    <Typography variant="h5" gutterBottom>
-                        Upcoming Interviews
-                    </Typography>
-                    <Grid container spacing={3}>
-                        {upcomingInterviews.length > 0 ? (
-                            renderInterviews(upcomingInterviews)
-                        ) : (
-                            <Typography variant="body1">No upcoming interviews.</Typography>
-                        )}
-                    </Grid>
-                    <Box sx={{ marginTop: '32px' }}>
-                        <Typography variant="h5" gutterBottom>
-                            Past Interviews
-                        </Typography>
-                        <Grid container spacing={3}>
-                            {pastInterviews.length > 0 ? (
-                                renderInterviews(pastInterviews)
-                            ) : (
-                                <Typography variant="body1">No past interviews.</Typography>
-                            )}
-                        </Grid>
-                    </Box>
+                <Box>
+                    <AppAppBar />
                 </Box>
-            </Container>
-        </Box>
+                <Box>
+                    <Container
+                        sx={{
+                            display: "flex",
+                            flexDirection: { xs: "row", sm: "column" },
+                            gap: { xs: 2, sm: 1 },
+                            width: "100%",
+                            bgcolor: "#24272B",
+                            borderRadius: 5,
+                            marginTop: '150px',
+                            alignItems: "center",
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: { xs: "row", sm: "column" },
+                                gap: { xs: 2, sm: 1 },
+                                width: "100%",
+                                bgcolor: "transparent",
+                                borderRadius: 5,
+                                alignItems: "center",
+                            }}>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: { xs: "row", sm: "column" },
+                                    gap: { xs: 2, sm: 1 },
+                                    width: "100%",
+                                    bgcolor: "transparent",
+                                    borderRadius: 5,
+                                    alignItems: "center",
+                                }}>
+                                <Typography variant="h5" gutterBottom>
+                                    Upcoming Interviews
+                                </Typography>
+                                <Grid container spacing={3}>
+                                    {upcomingInterviews.length > 0 ? (
+                                        renderInterviews(upcomingInterviews, true)
+                                    ) : (
+                                        <Typography variant="body1">No upcoming interviews.</Typography>
+                                    )}
+                                </Grid>
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: { xs: "row", sm: "column" },
+                                    gap: { xs: 2, sm: 1 },
+                                    width: "100%",
+                                    bgcolor: "transparent",
+                                    borderRadius: 5,
+                                    alignItems: "center",
+                                }}
+                            >
+                                <Typography variant="h5" gutterBottom>
+                                    Past Interviews
+                                </Typography>
+                                <Grid container spacing={3}>
+                                    {pastInterviews.length > 0 ? (
+                                        renderInterviews(pastInterviews, false)
+                                    ) : (
+                                        <Typography variant="body1">No past interviews.</Typography>
+                                    )}
+                                </Grid>
+                            </Box>
+                        </Box>
+                    </Container>
+                </Box>
+            </Box>
+            {/* Render Popup */}
+            {isPopupOpen && selectedInterview ? (
+                console.log("InterviewId: "+selectedInterview._id),
+                <ViewInterviewPopup
+                    interviewId={selectedInterview._id}
+                    onClose={handleClosePopup}
+                />
+            ) : (
+                <Typography variant="h6">Popup is not open</Typography> // Fallback message
+            )}
+        </>
     );
 };
 
-export default InterviewRoomPage;
+export default InterviewRoom;

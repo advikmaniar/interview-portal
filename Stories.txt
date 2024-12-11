@@ -2,11 +2,7 @@ Dashboard Page -
 
 Collect Feedback for NLP 
 Build Candidate and Interviewer Profiles/Schema - Add button in header
-Cleanup server.js
 
 
 Interview Room Page - 
-Add edit button
-Add bubbles for details
-Status dropdown
-Link candidate id and interview id to meeeting room
+Add bubbles for date/time

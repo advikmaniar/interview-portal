@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Box, Typography, Button } from '@mui/material';
 import { connect } from 'twilio-video';
 import axios from 'axios';
@@ -13,11 +13,14 @@ const VideoCall = () => {
     const [localParticipant, setLocalParticipant] = useState(null);
     const [remoteParticipants, setRemoteParticipants] = useState([]);
     const navigate = useNavigate();
+    const location = useLocation();
+    const interviewId = location.state?.interviewId;
+    console.log("VideCall() - InterviewId: " + interviewId)
 
     const connectToRoom = async () => {
         try {
             const token = localStorage.getItem('token');
-            const userId = localStorage.getItem('userId'); 
+            const userId = localStorage.getItem('userId');
             if (!token || !userId) throw new Error('Missing credentials in local storage!');
 
             const response = await axios.post(
@@ -25,6 +28,7 @@ const VideoCall = () => {
                 {
                     roomSid: roomSid,
                     userId: userId,
+                    interviewId: interviewId
                 },
                 {
                     headers: {
@@ -37,8 +41,12 @@ const VideoCall = () => {
             const videoRoom = await connect(roomToken, {
                 name: roomName,
                 audio: true,
-                video: { width: 640 },
+                video: {
+                    height: 2080,
+                    width: 2080
+                },
             });
+            console.log(videoRoom);
 
             setRoom(videoRoom);
             setLocalParticipant(videoRoom.localParticipant);
@@ -111,9 +119,12 @@ const VideoCall = () => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <Typography variant="h4" gutterBottom>
+            <Typography variant="h4">
                 Video Call - {roomName}
             </Typography>
+            {/* <Typography variant="h6"><strong>Candidate:</strong> {interview.candidateId?.firstName || 'N/A'} {interview.candidateId?.lastName || ''}</Typography>
+            <Typography variant="h6"><strong>Interviewer:</strong> {interview.interviewerId?.firstName || 'N/A'} {interview.interviewerId?.lastName || ''}</Typography> */}
+
             <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                 {/* Render Local Participant Video */}
                 {localParticipant && renderVideoTracks(localParticipant)}

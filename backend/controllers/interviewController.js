@@ -2,7 +2,8 @@
 const Video = require('twilio').Video;
 const twilio = require('twilio');
 const client = require('../config/twilio');
-const Interviews = require('../models/Interviews')
+const Interviews = require('../models/Interviews');
+const twilioClient = require('../config/twilio');
 const { TWILIO_ACCOUNT_SID, TWILIO_API_KEY, TWILIO_API_SECRET } = process.env;
 const { AccessToken } = require('twilio').jwt;
 const VideoGrant = AccessToken.VideoGrant;
@@ -124,11 +125,17 @@ const getRoomDetails = async (req, res) => {
 const generateRoomToken = async (req, res) => {
   const { roomSid } = req.body;
   const userId = req.user.id;
-  // const candidateId = req.body;
-  // const interviewId = req.body;
+  // const candidateId = req.body.candidateId;
+  // const interviewerId = req.body.interviewerId;
   const identity = `${userId}-${new Date().getTime()}`;
   const userType = req.user.role;
+  const interviewId = req.body.interviewId;
 
+  // console.log('Body:', req.body);
+
+  // console.log('InterviewerId:', interviewerId);
+  // console.log('CandidateId:', candidateId);
+  console.log('InterviewId: '+interviewId)
   console.log('Room SID:', roomSid);
   console.log('Identity:', identity);
 
@@ -136,24 +143,20 @@ const generateRoomToken = async (req, res) => {
     return res.status(400).json({ message: 'Room SID and user identity are required' });
   }
 
-  const interviewList = await Interviews.find({interviewerId:userId})
+  const interview = await Interviews.findById(interviewId)
     .populate('candidateId interviewerId')
     .exec();
     
-  // const interview = await Interviews.findById(interviewId)
-  //   .populate('candidateId interviewerId')
-  //   .exec();
+  console.log("Interviews: "+interview)
 
-  console.log("Interviews: "+interviewList)
-
-  if (!interviewList) {
+  if (!interview) {
     return res.status(404).json({ error: 'Interview not found' });
   }
 
-  if (userType === 'candidate' && !interviewList.candidateId._id.equals(userId)) {
+  if (userType === 'candidate' && !interview.candidateId._id.equals(userId)) {
     return res.status(403).json({ error: 'You are not authorized as the candidate for this meeting.' });
   }
-  if (userType === 'interviewer' && !interviewList.interviewerId._id.equals(userId)) {
+  if (userType === 'interviewer' && !interview.interviewerId._id.equals(userId)) {
     return res.status(403).json({ error: 'You are not authorized as the interviewer for this meeting.' });
   }
 

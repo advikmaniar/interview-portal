@@ -68,7 +68,7 @@ const InterviewCard = ({ interview, isPastInterview, onDelete, onStatusUpdate })
                         backgroundColor: '#4A525A',
                         color: '#ffffff',
                         borderRadius: '50px 50px 50px 50px',
-                        width: '100%',
+                        width: "100%",
                         p: '0px 20px 0px 0px',
                         title: 'View Interview Details',
                         '&:hover': {
@@ -102,7 +102,6 @@ const InterviewCard = ({ interview, isPastInterview, onDelete, onStatusUpdate })
                     </Box>
                     {/* Popup trigger */}
                     <ListItemText
-                        button
                         onClick={handleTogglePopup}
                         primaryTypographyProps={{
                             sx: { fontSize: '0.9rem', margin: 0 },
