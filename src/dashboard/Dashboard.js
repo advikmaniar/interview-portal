@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Button, Paper, CircularProgress } from '@mui/material';
+import { Box, Typography, Button, CircularProgress } from '@mui/material';
 import { Container, styled } from '@mui/system';
 import AppAppBar from './Header'
 import ScheduleInterviewPopup from './ScheduleInterviewPopup';
@@ -11,7 +11,6 @@ import CandidatePage from './CandidatePage';
 
 const Dashboard = () => {
     const [userData, setUserData] = useState(null);
-    const [interviews, setInterviews] = useState([]);
     const navigate = useNavigate();
 
     const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -43,25 +42,6 @@ const Dashboard = () => {
         );
     }
 
-    const handleInitiateVideoCall = async () => {
-        const roomName = `Room-${new Date().getTime()}`; 
-
-        try {
-            const response = await axios.post('http://localhost:5000/api/interviews/create-room', { roomName });
-
-            if (response.data && response.data.roomSid && response.data.roomName) {
-                const { roomSid, roomName } = response.data;
-                console.log(`Room created: ${roomSid}, ${roomName}`);
-
-                navigate(`/video-call/${roomSid}`, { state: { roomName } });
-            } else {
-                console.error("Invalid response data", response.data);
-            }
-        } catch (error) {
-            console.error('Error creating video room:', error.response ? error.response.data : error.message);
-        }
-    };
-
     return (
         <Box
             sx={{
@@ -80,7 +60,7 @@ const Dashboard = () => {
                     display: "flex",
                     flexDirection: { xs: "row", sm: "column" },
                     gap: { xs: 2, sm: 1 },
-                    bgcolor: "transparent",
+                    bgcolor: "green",
                     // height: 'auto', // Use auto or set a fixed height if needed
                     // maxHeight: 'calc(100vh - 64px)',
                     alignItems: "center",
@@ -145,26 +125,6 @@ const Dashboard = () => {
                     <Typography variant="button" color="inherit">
                         Schedule Interview
                     </Typography>
-                </Button>
-                <Button
-                    onClick={handleInitiateVideoCall}
-                    variant="contained"
-                    color="primary"
-                    sx={{
-                        textTransform: 'none',
-                        fontWeight: 'bold',
-                        fontSize: '16px',
-                        borderRadius: '8px',
-                        padding: '10px 20px',
-                        boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-                        backgroundColor: '#2196f3',
-                        ':hover': {
-                            backgroundColor: '#1976d2',
-                            boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
-                        },
-                    }}
-                >
-                    Start Video Call
                 </Button>
                 {isPopupOpen && <ScheduleInterviewPopup onClose={handleClosePopup} />}
             </Container>

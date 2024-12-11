@@ -30,6 +30,7 @@ const scheduleInterview = async (req, res) => {
       status,
       type,
       notes,
+      // roomSid: room.sid
     });
 
     await newInterview.save();
@@ -122,13 +123,38 @@ const getRoomDetails = async (req, res) => {
 
 const generateRoomToken = async (req, res) => {
   const { roomSid } = req.body;
-  const identity = `${req.user.id}-${new Date().getTime()}`;
+  const userId = req.user.id;
+  // const candidateId = req.body;
+  // const interviewId = req.body;
+  const identity = `${userId}-${new Date().getTime()}`;
+  const userType = req.user.role;
 
   console.log('Room SID:', roomSid);
   console.log('Identity:', identity);
 
   if (!roomSid || !identity) {
     return res.status(400).json({ message: 'Room SID and user identity are required' });
+  }
+
+  const interviewList = await Interviews.find({interviewerId:userId})
+    .populate('candidateId interviewerId')
+    .exec();
+    
+  // const interview = await Interviews.findById(interviewId)
+  //   .populate('candidateId interviewerId')
+  //   .exec();
+
+  console.log("Interviews: "+interviewList)
+
+  if (!interviewList) {
+    return res.status(404).json({ error: 'Interview not found' });
+  }
+
+  if (userType === 'candidate' && !interviewList.candidateId._id.equals(userId)) {
+    return res.status(403).json({ error: 'You are not authorized as the candidate for this meeting.' });
+  }
+  if (userType === 'interviewer' && !interviewList.interviewerId._id.equals(userId)) {
+    return res.status(403).json({ error: 'You are not authorized as the interviewer for this meeting.' });
   }
 
   const videoGrant = new VideoGrant({
@@ -142,7 +168,7 @@ const generateRoomToken = async (req, res) => {
       TWILIO_API_SECRET,
       {
         identity,
-    }
+      }
     );
     token.addGrant(videoGrant);
 

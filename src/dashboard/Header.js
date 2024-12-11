@@ -46,6 +46,10 @@ export default function AppAppBar() {
         navigate('/login');
     };
 
+    const navigateToInterviewRoom = () => {
+        navigate('/interview-room');
+      }; 
+
     return (
         <AppBar
             position="fixed"
@@ -63,7 +67,7 @@ export default function AppAppBar() {
                         sx={{ flexGrow: 1, display: "flex", alignItems: "center", justifyContent: "center", px: 0 }}
                     >
                         <Box sx={{ display: { xs: "none", md: "flex", gap: 50 } }}>
-                            <Button variant="text" color="info" size="small">
+                            <Button variant="text" color="info" size="small" onClick={navigateToInterviewRoom}>
                                 Interview Room
                             </Button>
                             <Button variant="text" color="info" size="small">
@@ -128,7 +132,7 @@ export default function AppAppBar() {
                                         <CloseRoundedIcon />
                                     </IconButton>
                                 </Box>
-                                <MenuItem>Interview Room</MenuItem>
+                                <MenuItem onClick={navigateToInterviewRoom}>Interview Room</MenuItem>
                                 <MenuItem>Feedback</MenuItem>
                                 <MenuItem>Calendar</MenuItem>
                                 <Divider sx={{ my: 3 }} />

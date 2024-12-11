@@ -14,9 +14,11 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const response = await loginUser(username, password);
-      localStorage.setItem('token', response.token); // Store JWT token in localStorage
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('userId', response.userId) // Store JWT token in localStorage
       setErrorMessage('');
       console.log("Username: " + username)
+      console.log('UserId:', response.userId);
       navigate('/dashboard');
     } catch (error) {
       const errorText = error?.message || error?.response?.data?.message || 'Something went wrong!';

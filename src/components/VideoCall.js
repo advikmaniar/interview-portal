@@ -7,6 +7,7 @@ import axios from 'axios';
 const VideoCall = () => {
 
     const { roomSid, roomName } = useParams();
+    console.log('roomSid from URL:', roomSid);
     const [room, setRoom] = useState(null);
     const [error, setError] = useState(null);
     const [localParticipant, setLocalParticipant] = useState(null);
@@ -15,13 +16,15 @@ const VideoCall = () => {
 
     const connectToRoom = async () => {
         try {
-            const token = localStorage.getItem('token'); // Ensure token is retrieved from localStorage
-            if (!token) throw new Error('No token found in localStorage');
+            const token = localStorage.getItem('token');
+            const userId = localStorage.getItem('userId'); 
+            if (!token || !userId) throw new Error('Missing credentials in local storage!');
 
             const response = await axios.post(
                 'http://localhost:5000/api/interviews/room-token',
                 {
                     roomSid: roomSid,
+                    userId: userId,
                 },
                 {
                     headers: {

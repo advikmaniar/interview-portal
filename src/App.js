@@ -6,6 +6,7 @@ import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegistrationPage';
 import VideoCall from './components/VideoCall';
 import Dashboard from './dashboard/Dashboard';
+import InterviewRoom from './dashboard/InterviewRoom'
 
 const theme = createTheme({
   palette: {
@@ -31,7 +32,7 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/profile" element={<Dashboard />} />
+        <Route path="/interview-room" element={<InterviewRoom />} />
         <Route path="/video-call/:roomSid" element={<VideoCall />} />
       </Routes>
     </Router>
