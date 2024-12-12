@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, CircularProgress } from '@mui/material';
-import { Container, styled } from '@mui/system';
-import AppAppBar from './Header'
-import ScheduleInterviewPopup from './ScheduleInterviewPopup';
+import { Container } from '@mui/system';
+import AppAppBar from '../header/Header';
+import { alpha, styled, useTheme } from "@mui/material/styles";
+
 import InterviewerPage from './InterviewerPage';
 import CandidatePage from './CandidatePage';
 
@@ -12,10 +13,7 @@ import CandidatePage from './CandidatePage';
 const Dashboard = () => {
     const [userData, setUserData] = useState(null);
     const navigate = useNavigate();
-
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
-    const handleOpenPopup = () => setIsPopupOpen(true);
-    const handleClosePopup = () => setIsPopupOpen(false);
+    const theme = useTheme();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -41,7 +39,6 @@ const Dashboard = () => {
             </Box>
         );
     }
-
     return (
         <Box
             sx={{
@@ -60,9 +57,7 @@ const Dashboard = () => {
                     display: "flex",
                     flexDirection: { xs: "row", sm: "column" },
                     gap: { xs: 2, sm: 1 },
-                    bgcolor: "green",
-                    // height: 'auto', // Use auto or set a fixed height if needed
-                    // maxHeight: 'calc(100vh - 64px)',
+                    bgcolor: "transparent",
                     alignItems: "center",
                 }}
             >
@@ -71,10 +66,11 @@ const Dashboard = () => {
                     flexDirection: "row",
                     height: 'auto',
                     maxHeight: 'auto',
-                    backgroundColor: "white",
+                    backgroundColor: alpha(theme.palette.background.default, 0.5),
+                    color: theme.palette.mode === "dark" ? "white" : "#333333",
                     flex: { xs: 1, sm: 3 },
                     borderRadius: 5,
-                    // boxShadow: 5,
+                    boxShadow: 5,
                     py: '20px',
                 }}>
                     {/* Candidate Section */}
@@ -91,7 +87,8 @@ const Dashboard = () => {
                         borderRadius: 5,
                         boxShadow: 5,
                         padding: "10px 20px 100px 20px",
-                        backgroundColor: '#1e1e1e',
+                        backgroundColor: alpha(theme.palette.background.default, 0.5),
+                        color: theme.palette.mode === "dark" ? "white" : "#333333",
                         width: "fit-content"
                     }}>
                         <Typography variant="h5" gutterBottom>
@@ -104,29 +101,6 @@ const Dashboard = () => {
                         </Typography>
                     </Container>
                 </Container>
-                <Button
-                    onClick={handleOpenPopup}
-                    variant="contained"
-                    color="primary"
-                    sx={{
-                        textTransform: 'none',
-                        fontWeight: 'bold',
-                        fontSize: '16px',
-                        borderRadius: '8px',
-                        padding: '10px 20px',
-                        boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-                        backgroundColor: '#2196f3',
-                        ':hover': {
-                            backgroundColor: '#1976d2',
-                            boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
-                        },
-                    }}
-                >
-                    <Typography variant="button" color="inherit">
-                        Schedule Interview
-                    </Typography>
-                </Button>
-                {isPopupOpen && <ScheduleInterviewPopup onClose={handleClosePopup} />}
             </Container>
         </Box>
     );

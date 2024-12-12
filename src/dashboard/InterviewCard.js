@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import ViewInterviewPopup from './ViewInterviewPopup';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { alpha, styled, useTheme } from "@mui/material/styles";
 import axios from 'axios';
 
 const InterviewCard = ({ interview, isPastInterview, onDelete, onStatusUpdate }) => {
@@ -19,6 +20,7 @@ const InterviewCard = ({ interview, isPastInterview, onDelete, onStatusUpdate })
     const [isEditing, setIsEditing] = useState(false);
     const [status, setStatus] = useState(interview.status);
     const [loading, setLoading] = useState(false);
+    const theme = useTheme();
 
     // Format date and time
     const interviewDate = new Date(interview.date);
@@ -65,14 +67,14 @@ const InterviewCard = ({ interview, isPastInterview, onDelete, onStatusUpdate })
                         display: 'flex',
                         flexDirection: 'row',
                         alignItems: 'center',
-                        backgroundColor: '#4A525A',
-                        color: '#ffffff',
+                        backgroundColor: alpha(theme.palette.background.default, 0.5),
+                        color: theme.palette.mode === "dark" ? "white" : "black",
                         borderRadius: '50px 50px 50px 50px',
                         width: "100%",
                         p: '0px 20px 0px 0px',
                         title: 'View Interview Details',
                         '&:hover': {
-                            backgroundColor: '#6D757D',
+                            backgroundColor: alpha(theme.palette.background.default, 1),
                             boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
                             transform: 'translateY(-2px)',
 
@@ -87,13 +89,13 @@ const InterviewCard = ({ interview, isPastInterview, onDelete, onStatusUpdate })
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            backgroundColor: '#939396',
-                            color: 'white',
+                            backgroundColor: theme.palette.mode === "dark" ? "#333333" : "white",
+                            color: theme.palette.mode === "dark" ? "white" : "black",
                             borderRadius: '50%',
                             width: 65,
                             height: 65,
-                            marginRight: 2, // Slightly more margin for better spacing
-                            fontSize: '0.75rem', // Adjusted font size
+                            marginRight: 2,
+                            fontSize: '0.75rem',
                             fontWeight: 'bold',
                             textAlign: 'center',
                         }}
@@ -104,10 +106,18 @@ const InterviewCard = ({ interview, isPastInterview, onDelete, onStatusUpdate })
                     <ListItemText
                         onClick={handleTogglePopup}
                         primaryTypographyProps={{
-                            sx: { fontSize: '0.9rem', margin: 0 },
+                            sx: {
+                                fontSize: '0.9rem',
+                                margin: 0,
+                                color: theme.palette.mode === "dark" ? "white" : "black",
+                            },
                         }}
                         secondaryTypographyProps={{
-                            sx: { fontSize: '0.8rem', margin: 0 },
+                            sx: {
+                                fontSize: '0.8rem',
+                                margin: 0,
+                                color: theme.palette.mode === "dark" ? "#999999" : "#222222",
+                            },
                         }}
                         primary={`${interview.role} at ${interview.company}`}
                         secondary={`Candidate: ${interview.candidateId.firstName} ${interview.candidateId.lastName}`}

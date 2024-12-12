@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, Typography, Grid, Box, Button, Container } from '@mui/material';
-import AppAppBar from './Header';
+import AppAppBar from '../header/Header';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { CustomButton, Tag } from '../utils/utils';
 import EditIcon from '@mui/icons-material/Edit';
-import ViewInterviewPopup from './ViewInterviewPopup';
+import ViewInterviewPopup from '../dashboard/ViewInterviewPopup';
+import { alpha, styled, useTheme } from "@mui/material/styles";
 
 const InterviewRoom = () => {
     const [upcomingInterviews, setUpcomingInterviews] = useState([]);
@@ -15,6 +16,7 @@ const InterviewRoom = () => {
 
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedInterview, setSelectedInterview] = useState(null);
+    const theme = useTheme();
 
     const handleEditClick = (interview) => {
         console.log("Edit button clicked");
@@ -116,15 +118,18 @@ const InterviewRoom = () => {
                         flexDirection: 'column',
                         justifyContent: 'space-between',
                         height: '100%',
-                        backgroundColor: '#4A525A',
+                        backgroundColor: alpha(theme.palette.background.default, 0.5),
+                        color: theme.palette.mode === "dark" ? "black" : "black",
                         borderRadius: 5,
                         boxShadow: 5,
                         padding: 0,
                         color: '#ffffff',
                         '&:hover': {
-                            backgroundColor: '#6D757D',
+                            backgroundColor: alpha(theme.palette.background.default, 1),
                             boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
                             transform: 'translateY(-2px)',
+
+
                         },
                         cursor: 'pointer',
                     }}
@@ -142,7 +147,8 @@ const InterviewRoom = () => {
                                 flexDirection: 'row',
                                 alignItems: "center",
                                 gap: 1,
-                                backgroundColor: '#939396',
+                                backgroundColor: alpha(theme.palette.background.default, 0.5),
+                                color: theme.palette.mode === "dark" ? "black" : "black",
                                 borderRadius: 10,
                                 boxShadow: 5,
                                 color: '#ffffff',
@@ -151,7 +157,7 @@ const InterviewRoom = () => {
                                 sx={{
                                     flexShrink: 0,
                                     backgroundColor: 'transparent',
-                                    color: 'white',
+                                    color: theme.palette.mode === "dark" ? "white" : "#333333",
                                     borderRadius: 10,
                                     marginRight: 'auto',
                                     padding: '4px 8px',
@@ -164,16 +170,27 @@ const InterviewRoom = () => {
                             </Box>
                             <Box
                                 onClick={() => {
-                                    handleEditClick(interview)
+                                    handleEditClick(interview);
                                 }}
-                                sx={{ cursor: 'pointer' }}>
-                                <EditIcon />
+                                sx={{
+                                    cursor: 'pointer',
+                                    backgroundColor: alpha(theme.palette.background.default, 0.5),
+                                    color: theme.palette.mode === "dark" ? "black" : "#333333",
+                                    borderRadius: "50%",
+                                    width: 37,
+                                    height: 37,
+                                    display: 'flex',
+                                    justifyContent: 'center', // Centers the icon horizontally
+                                    alignItems: 'center', // Centers the icon vertically
+                                }}
+                            >
+                                <EditIcon fontSize="small" sx={{ color: theme.palette.mode === "dark" ? "black" : "#333333", }} /> {/* Adjust fontSize as needed */}
                             </Box>
                         </Box>
                         <Box
                             sx={{
                                 backgroundColor: 'transparent',
-                                color: 'white',
+                                color: theme.palette.mode === "dark" ? "white" : "#333333",
                                 borderRadius: 10,
                                 marginRight: 'auto',
                                 padding: '5px 8px',
@@ -239,8 +256,9 @@ const InterviewRoom = () => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     minHeight: '100vh',
-                    backgroundColor: '#696969',
-                    color: '#ffffff',
+                    backgroundColor: theme.palette.mode === "dark" ? "#444444" : "#dddddd",
+                    // backgroundColor: alpha(theme.palette.background.default, 0.5),
+                    color: theme.palette.mode === "dark" ? "white" : "black",
                 }}
             >
                 <Box>
@@ -253,7 +271,8 @@ const InterviewRoom = () => {
                             flexDirection: { xs: "row", sm: "column" },
                             gap: { xs: 2, sm: 1 },
                             width: "100%",
-                            bgcolor: "#24272B",
+                            backgroundColor: alpha(theme.palette.background.default, 0.5),
+                            color: theme.palette.mode === "dark" ? "white" : "black",
                             borderRadius: 5,
                             marginTop: '150px',
                             alignItems: "center",
@@ -318,7 +337,7 @@ const InterviewRoom = () => {
             </Box>
             {/* Render Popup */}
             {isPopupOpen && selectedInterview ? (
-                console.log("InterviewId: "+selectedInterview._id),
+                console.log("InterviewId: " + selectedInterview._id),
                 <ViewInterviewPopup
                     interviewId={selectedInterview._id}
                     onClose={handleClosePopup}

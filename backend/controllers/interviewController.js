@@ -1,12 +1,10 @@
-
-const Video = require('twilio').Video;
-const twilio = require('twilio');
 const client = require('../config/twilio');
 const Interviews = require('../models/Interviews');
-const twilioClient = require('../config/twilio');
 const { TWILIO_ACCOUNT_SID, TWILIO_API_KEY, TWILIO_API_SECRET } = process.env;
 const { AccessToken } = require('twilio').jwt;
 const VideoGrant = AccessToken.VideoGrant;
+const User = require('../models/User');
+
 
 const scheduleInterview = async (req, res) => {
   const { date, candidateId, interviewerId, company, role, status, type, notes } = req.body;

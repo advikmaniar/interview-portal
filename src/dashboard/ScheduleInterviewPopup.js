@@ -17,6 +17,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
+import { CustomButton } from '../utils/utils';
 
 const ScheduleInterviewPopup = ({ onClose }) => {
   const [candidates, setCandidates] = useState([]);
@@ -36,9 +37,9 @@ const ScheduleInterviewPopup = ({ onClose }) => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
-      });
+        });
         const candidates = response.data.filter(user => user.role === 'Candidate');
-        console.log("Candidates: "+ candidates);
+        console.log("Candidates: " + candidates);
         setCandidates(candidates);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -86,7 +87,7 @@ const ScheduleInterviewPopup = ({ onClose }) => {
 
   return (
     <Modal
-      open={true} 
+      open={true}
       onClose={onClose}
       sx={{
         display: 'flex',
@@ -204,28 +205,14 @@ const ScheduleInterviewPopup = ({ onClose }) => {
               />
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Button
-                type="submit"
-                variant="contained"
+              <CustomButton
+                onClick={handleSubmit}
+                text="Schedule Interview"
                 color="primary"
-                sx={{
-                  textTransform: 'none',
-                  fontWeight: 'bold',
-                  fontSize: '16px',
-                  borderRadius: '8px',
-                  padding: '10px 20px',
-                  boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-                  backgroundColor: '#2196f3',
-                  ':hover': {
-                    backgroundColor: '#1976d2',
-                    boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
-                  },
-                }}
+
               >
-                <Typography variant="button" color="inherit">
-                  Schedule Interview
-                </Typography>
-              </Button>
+
+              </CustomButton>
             </Box>
           </form>
         )}

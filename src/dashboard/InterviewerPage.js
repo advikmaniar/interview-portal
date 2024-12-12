@@ -3,10 +3,12 @@ import { Box, Typography, Container, List, Divider, Button } from '@mui/material
 import axios from 'axios';
 import InterviewCard from './InterviewCard';
 import { CustomButton } from '../utils/utils';
+import { alpha, styled, useTheme } from "@mui/material/styles";
 
 const InterviewerPage = () => {
   const [upcomingInterviews, setUpcomingInterviews] = useState([]);
   const [pastInterviews, setPastInterviews] = useState([]);
+  const theme = useTheme();
 
   useEffect(() => {
     const fetchInterviews = async () => {
@@ -82,7 +84,9 @@ const InterviewerPage = () => {
           fontWeight: 'bold',
           borderRadius: 5,
           boxShadow: 5,
-          backgroundColor: '#24272B',
+          // backgroundColor: '#24272B',
+          backgroundColor: alpha(theme.palette.background.default, 0.5),
+          color: theme.palette.mode === "dark" ? "white" : "black",
           marginBottom: 0.5,
           '&:hover': {
             boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
@@ -164,11 +168,13 @@ const InterviewerPage = () => {
           fontWeight: 'bold',
           borderRadius: 5,
           boxShadow: 5,
-          p: '5px 0px 0px 0px',
-          backgroundColor: '#24272B',
+          // backgroundColor: '#24272B',
+          backgroundColor: alpha(theme.palette.background.default, 0.5),
+          color: theme.palette.mode === "dark" ? "white" : "black",
           marginBottom: 0.5,
           '&:hover': {
             boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
+
           },
         }}
       >

@@ -2,7 +2,10 @@ Dashboard Page -
 
 Collect Feedback for NLP 
 Build Candidate and Interviewer Profiles/Schema - Add button in header
+Add home button in header
 
 
 Interview Room Page - 
 Add bubbles for date/time
+
+Add updated fields to schedule interview popup
