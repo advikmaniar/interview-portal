@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get('/dashboard', authenticate, userController.getUserData);
 
+router.get('/candidate/:candidateId', userController.getCandidateData);
 // Route to get all users (both interviewers and candidates)
 router.get('/', async (req, res) => {
   try {

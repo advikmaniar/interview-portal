@@ -78,9 +78,43 @@ export default function AppAppBar() {
                         boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
                     }}
                 >
-                    <Box></Box>
+
+                    {/* Site Icon */}
                     <Box
-                        sx={{ flexGrow: 1, display: "flex", alignItems: "center", justifyContent: "center", px: 0 }}
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                        }}
+                    >
+                        <Button
+                            onClick={navigateToHome}
+                            sx={{
+                                padding: 0,
+                                minWidth: 0,
+                                borderRadius: "50%",
+                                '&:hover': {
+                                    backgroundColor: "transparent",
+                                },
+                            }}
+                        >
+                            <img
+                                src="/path/to/your/logo.png"
+                                alt="Logo"
+                                style={{
+                                    height: "40px",
+                                    objectFit: "contain",
+                                }}
+                            />
+                        </Button>
+                    </Box>
+                    <Box
+                        sx={{
+                            flexGrow: 1,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            px: 0
+                        }}
                     >
                         <Box sx={{ display: { xs: "none", md: "flex", gap: 20 } }}>
                             <Button

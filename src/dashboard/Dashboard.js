@@ -72,7 +72,8 @@ const Dashboard = () => {
                     borderRadius: 5,
                     boxShadow: 5,
                     py: '20px',
-                }}>
+                }}
+                >
                     {/* Candidate Section */}
                     {userData.role === 'Candidate' && (
                         <CandidatePage />
@@ -82,24 +83,53 @@ const Dashboard = () => {
                         <InterviewerPage />
                     )}
                     {/* Feedback Section */}
-                    <Container sx={{
-                        fontWeight: "bold",
-                        borderRadius: 5,
-                        boxShadow: 5,
-                        padding: "10px 20px 100px 20px",
-                        backgroundColor: alpha(theme.palette.background.default, 0.5),
-                        color: theme.palette.mode === "dark" ? "white" : "#333333",
-                        width: "fit-content"
-                    }}>
-                        <Typography variant="h5" gutterBottom>
-                            Recent Feedback
-                        </Typography>
-                        <Typography variant="body1">
-                            {userData.role === 'interviewer'
-                                ? 'Provide feedback for candidates here.'
-                                : 'Your feedback from recent interviews will appear here.'}
-                        </Typography>
-                    </Container>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: "column",
+                            // justifyContent: 'center',
+                            // alignItems: 'center',
+                            backgroundColor: alpha(theme.palette.background.default, 0.5),
+                            color: theme.palette.mode === "dark" ? "white" : "#333333",
+                        }}>
+                        <Container sx={{
+                            fontWeight: "bold",
+                            borderRadius: 5,
+                            boxShadow: 5,
+                            padding: "10px 20px 100px 20px",
+                            backgroundColor: alpha(theme.palette.background.default, 0.5),
+                            color: theme.palette.mode === "dark" ? "white" : "#333333",
+                            width: "fit-content"
+                        }}>
+                            <Typography variant="h5" gutterBottom>
+                                Recent Feedback
+                            </Typography>
+                            <Typography variant="body1">
+                                {userData.role === 'interviewer'
+                                    ? 'Provide feedback for candidates here.'
+                                    : 'Your feedback from recent interviews will appear here.'}
+                            </Typography>
+                        </Container>
+                        {/* Statistics */}
+                        <Container sx={{
+                            fontWeight: "bold",
+                            borderRadius: 5,
+                            boxShadow: 5,
+                            padding: "10px 20px 100px 20px",
+                            backgroundColor: alpha(theme.palette.background.default, 0.5),
+                            color: theme.palette.mode === "dark" ? "white" : "#333333",
+                            width: "fit-content"
+                        }}>
+                            <Typography variant="h5" gutterBottom>
+                                Statistics
+                            </Typography>
+                            <Typography variant="body1">
+                                {userData.role === 'interviewer'
+                                    ? 'Provide feedback for candidates here.'
+                                    : 'Your feedback from recent interviews will appear here.'}
+                            </Typography>
+                        </Container>
+                    </Box>
                 </Container>
             </Container>
         </Box>

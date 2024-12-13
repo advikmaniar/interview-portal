@@ -16,8 +16,6 @@ connectDB();
 
 app.use('/api/auth', authRoutes);   
 app.use('/api/users', userRoutes); 
-
-// Interview Room
 app.use('/api/interviews', interviewRoutes);
 
 

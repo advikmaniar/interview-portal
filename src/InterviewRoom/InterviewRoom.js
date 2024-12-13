@@ -20,61 +20,61 @@ const InterviewRoom = () => {
 
     const handleEditClick = (interview) => {
         console.log("Edit button clicked");
-        console.log("Selected Interview: ", interview);  // Make sure this is logging correctly
-        setSelectedInterview(interview);  // Set the selected interview
-        setIsPopupOpen(true);  // Open the popup
+        console.log("Selected Interview: ", interview);
+        setSelectedInterview(interview);
+        setIsPopupOpen(true);
     };
 
     const handleClosePopup = () => {
         setIsPopupOpen(false);
     };
 
+    const fetchInterviews = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/api/interviews/interviews', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            const interviews = response.data;
+            const currentDate = new Date();
+
+            // Update statuses for overdue interviews
+            const updatedInterviews = interviews.map((interview) => {
+                const interviewDate = new Date(interview.date);
+                if (
+                    interviewDate < currentDate &&
+                    interview.status !== 'Completed' &&
+                    interview.status !== 'Cancelled'
+                ) {
+                    interview.status = 'Overdue';
+                }
+                return interview;
+            });
+
+            const upcoming = updatedInterviews
+                .filter(
+                    (interview) =>
+                        new Date(interview.date) > currentDate &&
+                        !['Completed', 'Cancelled'].includes(interview.status)
+                )
+                .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            const past = updatedInterviews
+                .filter(
+                    (interview) =>
+                        new Date(interview.date) <= currentDate ||
+                        ['Completed', 'Cancelled'].includes(interview.status)
+                )
+                .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            setUpcomingInterviews(upcoming);
+            setPastInterviews(past);
+        } catch (error) {
+            console.error('Error fetching interviews:', error);
+        }
+    };
+
     useEffect(() => {
-        const fetchInterviews = async () => {
-            try {
-                const response = await axios.get('http://localhost:5000/api/interviews/interviews', {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-
-                const interviews = response.data;
-                const currentDate = new Date();
-
-                // Update statuses for overdue interviews
-                const updatedInterviews = interviews.map((interview) => {
-                    const interviewDate = new Date(interview.date);
-                    if (
-                        interviewDate < currentDate &&
-                        interview.status !== 'Completed' &&
-                        interview.status !== 'Cancelled'
-                    ) {
-                        interview.status = 'Overdue';
-                    }
-                    return interview;
-                });
-
-                const upcoming = updatedInterviews
-                    .filter(
-                        (interview) =>
-                            new Date(interview.date) > currentDate &&
-                            !['Completed', 'Cancelled'].includes(interview.status)
-                    )
-                    .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-                const past = updatedInterviews
-                    .filter(
-                        (interview) =>
-                            new Date(interview.date) <= currentDate ||
-                            ['Completed', 'Cancelled'].includes(interview.status)
-                    )
-                    .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-                setUpcomingInterviews(upcoming);
-                setPastInterviews(past);
-            } catch (error) {
-                console.error('Error fetching interviews:', error);
-            }
-        };
-
         fetchInterviews();
     }, []);
 
@@ -109,6 +109,19 @@ const InterviewRoom = () => {
         }
     };
 
+    const handleCancelInterview = async (interviewId) => {
+        try {
+            await axios.put(
+                `http://localhost:5000/api/interviews/${interviewId}`,
+                { status: 'Cancelled' },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            fetchInterviews();
+        } catch (error) {
+            console.error('Error cancelling interview:', error.response ? error.response.data : error.message);
+        }
+    };
+
     const renderInterviews = (interviews, isUpcoming) =>
         interviews.map((interview, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
@@ -128,8 +141,6 @@ const InterviewRoom = () => {
                             backgroundColor: alpha(theme.palette.background.default, 1),
                             boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.2)',
                             transform: 'translateY(-2px)',
-
-
                         },
                         cursor: 'pointer',
                     }}
@@ -203,7 +214,15 @@ const InterviewRoom = () => {
                             </Box>
                             <Box>
                                 <Typography variant="body2">
-                                    <strong>Date:</strong> {new Date(interview.date).toLocaleString()}
+                                    <strong>Date:</strong> {new Date(interview.date).toLocaleString('en-US', {
+                                        weekday: 'long',
+                                        year: '2-digit',
+                                        month: '2-digit',
+                                        day: '2-digit',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: true
+                                    })}
                                 </Typography>
                             </Box>
                             <Box
@@ -230,9 +249,12 @@ const InterviewRoom = () => {
                     {isUpcoming && (
                         <Box
                             sx={{
+                                display: "flex",
+                                flexDirection: "row",
                                 justifyContent: 'center',
-                                alignItems: "center",
-                                p: '0px 0px 10px 10px',
+                                alignItems: 'center',
+                                paddingBottom: "10px",
+                                gap: 5,
                             }}>
                             <CustomButton
                                 onClick={
@@ -240,6 +262,12 @@ const InterviewRoom = () => {
                                         handleInitiateVideoCall(interview._id);
                                     }}
                                 text="Start Meeting"
+                            >
+                            </CustomButton>
+                            <CustomButton
+                                onClick={() => handleCancelInterview(interview._id)}
+                                text="Cancel"
+                                sx={{ backgroundColor: 'red', color: 'white' }} // Style the Cancel button
                             >
                             </CustomButton>
                         </Box>
@@ -288,6 +316,7 @@ const InterviewRoom = () => {
                                 borderRadius: 5,
                                 alignItems: "center",
                             }}>
+
                             <Box
                                 sx={{
                                     display: "flex",
@@ -309,6 +338,7 @@ const InterviewRoom = () => {
                                     )}
                                 </Grid>
                             </Box>
+
                             <Box
                                 sx={{
                                     display: "flex",

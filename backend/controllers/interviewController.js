@@ -55,7 +55,11 @@ const getInterviewById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const interview = await Interviews.findById(id).populate('candidateId');
+
+    const interview = await Interviews.findById(id)
+      .populate('candidateId', 'firstName lastName email') 
+      .populate('interviewerId', 'firstName lastName email'); 
+
     if (interview) {
       res.status(200).json(interview);
     } else {

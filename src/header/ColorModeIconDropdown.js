@@ -7,7 +7,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { useThemeMode } from "./ThemeModeProvider"; 
 
 function ColorModeIconDropdown(props) {
-  const { mode, toggleTheme } = useThemeMode(); // Get theme state and toggle function
+  const { mode, toggleTheme } = useThemeMode();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
@@ -20,7 +20,7 @@ function ColorModeIconDropdown(props) {
   };
 
   const handleMode = (targetMode) => () => {
-    toggleTheme(); // Toggle the theme on click
+    toggleTheme(); 
     handleClose();
   };
 
